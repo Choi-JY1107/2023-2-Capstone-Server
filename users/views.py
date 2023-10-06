@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from users.forms import LoginForm, SignupForm
+from users.models import User
 
 
 def login_view(request):
@@ -43,9 +44,25 @@ def signup(request):
             profile_image = form.cleaned_data["profile_image"]
             short_description = form.cleaned_data["short_description"]
 
-        context = {"form": form}
-        return render(request, "users/signup.html", context)
+            if password1 != password2:
+                form.add_error("password2", "비밀번호와 비밀번호 확인란의 값이 다릅니다.")
 
-    form = SignupForm()
-    context = {"forms": form}
-    return render(request, "users/signup.html", context)
+            if User.objects.filter(username=username).exists():
+                form.add_error("username", "입력한 사용자명은 이미 사용중입니다.")
+
+            if form.errors:
+                context = {"form": form}
+                return render(request, "users/signup.html", context)
+            else:
+                user = User.objects.create_user(
+                    username=username,
+                    password=password1,
+                    profile_image=profile_image,
+                    short_description=short_description,
+                )
+                login(request, user)
+                return redirect("/posts/feeds/")
+    else:
+        form = SignupForm()
+        context = {"forms": form}
+        return render(request, "users/signup.html", context)
