@@ -7,7 +7,7 @@ from rest_framework import status
 
 from users.forms import LoginForm, SignupForm
 from users.models import User
-from users.serializers import UserSerializer
+from users.serializers import UserSerializer, LoginSerializer
 
 
 class LoginAPI(APIView):
@@ -17,21 +17,15 @@ class LoginAPI(APIView):
         return render(request, "users/login.html", context)
 
     def post(self, request):
-        form = LoginForm(data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data["username"]
-            password = form.cleaned_data["password"]
-            user = authenticate(username=username, password=password)
+        serializer = LoginSerializer(data=request.POST)
+        serializer.is_valid()
 
-            if user:
-                login(request, user)
-                return redirect("/posts/feeds/")
-            else:
-                print("계정 정보가 틀렸습니다.")
-                return HttpResponse("로그인에 실패하였습니다.")
-
-        context = {"form": form}
-        return render(request, "users/login.html", context)
+        if serializer.validated_data['message'] == 'fail':
+            return JsonResponse({'message': '로그인에 실패하였습니다.'}, status=400)
+        if serializer.validated_data['message'] == 'success':
+            login(request, serializer.validated_data['user'])
+            return JsonResponse({'message': '로그인에 성공하였습니다.'}, status=200)
+        # return render(request, "users/login.html", context)
 
 
 class LogoutAPI(APIView):
@@ -51,15 +45,25 @@ class SignupAPI(APIView):
         return render(request, "users/signup.html", context)
 
     def post(self, request):
-        form = SignupForm(data=request.POST, files=request.FILES)
+        print(dict(request.data))
+        username = request.data['username']
+        nickname = request.data['nickname']
+        password1 = request.data['password1']
+        password2 = request.data['password2']
+        phone_number = request.data['phone_number']
 
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return HttpResponse("회원가입 성공!")
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({'message': '이미 존재하는 계정입니다.'}, status=400)
+        if password1 != password2:
+            return JsonResponse({'message': '비밀번호가 일치하지 않습니다.'}, status=400)
 
-        context = {"form": form}
-        return HttpResponse("회원가입 실패!")
+        User.objects.create_user(
+            username=username,
+            nickname=nickname,
+            password=password1,
+            phone_number=phone_number
+        )
+        return JsonResponse({'message': '회원가입에 성공하였습니다'}, status=201)
 
 
 class TestAPI(APIView):
@@ -67,7 +71,7 @@ class TestAPI(APIView):
         user = User.objects.all()
         serializer = UserSerializer(user, many=True)
 
-        return JsonResponse({'data' : serializer.data}, safe=False)
+        return JsonResponse({'data': serializer.data}, safe=False)
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
