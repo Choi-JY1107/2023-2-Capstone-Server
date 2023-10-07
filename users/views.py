@@ -1,14 +1,22 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
+
+from django.http import JsonResponse, HttpResponse
+from rest_framework.views import APIView
+from rest_framework import status
+
 from users.forms import LoginForm, SignupForm
 from users.models import User
+from users.serializers import UserSerializer
 
 
-def login_view(request):
-    if request.user.is_authenticated:
-        return redirect("/posts/feeds/")
+class LoginAPI(APIView):
+    def get(self, request):
+        form = LoginForm()
+        context = {"form": form}
+        return render(request, "users/login.html", context)
 
-    if request.method == "POST":
+    def post(self, request):
         form = LoginForm(data=request.POST)
         if form.is_valid():
             username = form.cleaned_data["username"]
@@ -20,30 +28,50 @@ def login_view(request):
                 return redirect("/posts/feeds/")
             else:
                 print("계정 정보가 틀렸습니다.")
+                return HttpResponse("로그인에 실패하였습니다.")
 
         context = {"form": form}
         return render(request, "users/login.html", context)
-    else:
-        form = LoginForm()
+
+
+class LogoutAPI(APIView):
+    def get(self, request):
+        print(request.session)
+        # 로그아웃 했는 지
+        if request.session:
+            logout(request)
+            return HttpResponse("로그아웃 성공!")
+        return HttpResponse("로그아웃 실패!")
+
+
+class SignupAPI(APIView):
+    def get(self, request):
+        form = SignupForm()
         context = {"form": form}
-        return render(request, "users/login.html", context)
+        return render(request, "users/signup.html", context)
 
-
-def logout_view(request):
-    logout(request)
-    return redirect("/users/login/")
-
-
-def signup(request):
-    if request.method == "POST":
+    def post(self, request):
         form = SignupForm(data=request.POST, files=request.FILES)
 
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("/posts/feeds/")
-    else:
-        form = SignupForm()
+            return HttpResponse("회원가입 성공!")
 
-    context = {"form": form}
-    return render(request, "users/signup.html", context)
+        context = {"form": form}
+        return HttpResponse("회원가입 실패!")
+
+
+class TestAPI(APIView):
+    def get(self, request):
+        user = User.objects.all()
+        serializer = UserSerializer(user, many=True)
+
+        return JsonResponse({'data' : serializer.data}, safe=False)
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+        return JsonResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
