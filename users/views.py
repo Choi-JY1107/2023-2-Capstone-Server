@@ -1,84 +1,43 @@
-from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
-
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 
-from users.forms import LoginForm, SignupForm
 from users.models import User
-from users.serializers import UserSerializer, LoginSerializer
+from users.serializers import UserSerializer, LoginSerializer, SignupSerializer
 
 
 class LoginAPI(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request):
-        form = LoginForm()
-        context = {"form": form}
-        return render(request, "users/login.html", context)
-
-    def post(self, request):
+    @staticmethod
+    def post(request):
         serializer = LoginSerializer(data=request.POST)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
 
         if serializer.validated_data['message'] == 'fail':
             return JsonResponse(data=serializer.validated_data, status=status.HTTP_400_BAD_REQUEST)
         if serializer.validated_data['message'] == 'success':
             return JsonResponse(data=serializer.validated_data, status=status.HTTP_200_OK)
-        # return render(request, "users/login.html", context)
-
-
-class LogoutAPI(APIView):
-    def get(self, request):
-        # 로그아웃 했는 지
-        if request.session:
-            logout(request)
-            return HttpResponse("로그아웃 성공!")
-        return HttpResponse("로그아웃 실패!")
 
 
 class SignupAPI(APIView):
-    @staticmethod
-    def get(self, request):
-        form = SignupForm()
-        context = {"form": form}
-        return render(request, "users/signup.html", context)
+    permission_classes = [AllowAny]
 
     @staticmethod
-    def post(self, request):
-        print(dict(request.data))
-        username = request.data['username']
-        nickname = request.data['nickname']
-        password1 = request.data['password1']
-        password2 = request.data['password2']
-        phone_number = request.data['phone_number']
+    def post(request):
+        serializer = SignupSerializer(data=request.POST)
+        serializer.is_valid(raise_exception=True)
 
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({'message': '이미 존재하는 계정입니다.'}, status=400)
-        if password1 != password2:
-            return JsonResponse({'message': '비밀번호가 일치하지 않습니다.'}, status=400)
-
-        User.objects.create_user(
-            username=username,
-            nickname=nickname,
-            password=password1,
-            phone_number=phone_number
-        )
-        return JsonResponse({'message': '회원가입에 성공하였습니다'}, status=201)
+        if serializer.validated_data['message'] == 'SignUp Success':
+            return JsonResponse(data=serializer.validated_data, status=status.HTTP_201_CREATED)
+        return JsonResponse(data=serializer.validated_data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TestAPI(APIView):
-    def get(self, request):
+    @staticmethod
+    def get(request):
         user = User.objects.all()
         serializer = UserSerializer(user, many=True)
 
         return JsonResponse({'data': serializer.data}, safe=False)
-
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-        return JsonResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
