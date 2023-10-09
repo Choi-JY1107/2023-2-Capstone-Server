@@ -21,10 +21,10 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(username=username, password=password)
 
         if user is None:
-            return {'message': 'fail'}
+            return {'message': 'fail', 'username': username}
         user.last_login = datetime.now()
         user.save()
-        return {'message': 'success', 'user': user}
+        return {'message': 'success', 'username': username}
 #
 #
 # class SignupSerializer(serializers.Serializer):

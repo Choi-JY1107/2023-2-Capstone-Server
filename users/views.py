@@ -21,14 +21,17 @@ class LoginAPI(APIView):
         serializer.is_valid()
 
         if serializer.validated_data['message'] == 'fail':
-            return JsonResponse({'message': '로그인에 실패하였습니다.'}, status=400)
+            return JsonResponse(data=serializer.validated_data, status=400)
         if serializer.validated_data['message'] == 'success':
-            login(request, serializer.validated_data['user'])
-            return JsonResponse({'message': '로그인에 성공하였습니다.'}, status=200)
+            print(serializer.validated_data['username'])
+            user = User.objects.get(username=serializer.validated_data['username'])
+            login(request, user)
+            return JsonResponse(data=serializer.validated_data, status=200)
         # return render(request, "users/login.html", context)
 
 
 class LogoutAPI(APIView):
+    @staticmethod
     def get(self, request):
         print(request.session)
         # 로그아웃 했는 지
@@ -39,11 +42,13 @@ class LogoutAPI(APIView):
 
 
 class SignupAPI(APIView):
+    @staticmethod
     def get(self, request):
         form = SignupForm()
         context = {"form": form}
         return render(request, "users/signup.html", context)
 
+    @staticmethod
     def post(self, request):
         print(dict(request.data))
         username = request.data['username']
@@ -67,12 +72,14 @@ class SignupAPI(APIView):
 
 
 class TestAPI(APIView):
+    @staticmethod
     def get(self, request):
         user = User.objects.all()
         serializer = UserSerializer(user, many=True)
 
         return JsonResponse({'data': serializer.data}, safe=False)
 
+    @staticmethod
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
