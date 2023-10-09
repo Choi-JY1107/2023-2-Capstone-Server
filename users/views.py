@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 from users.forms import LoginForm, SignupForm
 from users.models import User
@@ -11,6 +12,8 @@ from users.serializers import UserSerializer, LoginSerializer
 
 
 class LoginAPI(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         form = LoginForm()
         context = {"form": form}
@@ -21,19 +24,14 @@ class LoginAPI(APIView):
         serializer.is_valid()
 
         if serializer.validated_data['message'] == 'fail':
-            return JsonResponse(data=serializer.validated_data, status=400)
+            return JsonResponse(data=serializer.validated_data, status=status.HTTP_400_BAD_REQUEST)
         if serializer.validated_data['message'] == 'success':
-            print(serializer.validated_data['username'])
-            user = User.objects.get(username=serializer.validated_data['username'])
-            login(request, user)
-            return JsonResponse(data=serializer.validated_data, status=200)
+            return JsonResponse(data=serializer.validated_data, status=status.HTTP_200_OK)
         # return render(request, "users/login.html", context)
 
 
 class LogoutAPI(APIView):
-    @staticmethod
     def get(self, request):
-        print(request.session)
         # 로그아웃 했는 지
         if request.session:
             logout(request)
@@ -72,14 +70,12 @@ class SignupAPI(APIView):
 
 
 class TestAPI(APIView):
-    @staticmethod
     def get(self, request):
         user = User.objects.all()
         serializer = UserSerializer(user, many=True)
 
         return JsonResponse({'data': serializer.data}, safe=False)
 
-    @staticmethod
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():

@@ -1,8 +1,12 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from datetime import datetime
+from django.contrib.auth.models import update_last_login
+from rest_framework_jwt.settings import api_settings
 
 from .models import User
+
+jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
 class UserSerializer(serializers.Serializer):
@@ -21,10 +25,13 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(username=username, password=password)
 
         if user is None:
-            return {'message': 'fail', 'username': username}
-        user.last_login = datetime.now()
-        user.save()
-        return {'message': 'success', 'username': username}
+            return {'message': 'fail'}
+
+        payload = jwt_payload_handler(user)
+        token = jwt_encode_handler(payload)
+
+        update_last_login(None, user)
+        return {'message': 'success', 'token': token}
 #
 #
 # class SignupSerializer(serializers.Serializer):

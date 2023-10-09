@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os.path
 from pathlib import Path
+from datetime import timedelta
+
 AUTH_USER_MODEL = "users.User"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,7 +31,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     ".ap-northeast-2.compute.amazonaws.com",
-    "localhost"
+    "localhost",
+    "127.0.0.1",
 ]
 
 
@@ -43,6 +46,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework_jwt",
+    "rest_framework_jwt.blacklist",
 
     "posts",
     "users",
@@ -108,6 +113,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+
+        # 'rest_framework.permissions.AllowAny',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+}
+
+JWT_AUTH = {
+    'JWT_SECRET_KEY': 'SECRET_KEY',
+    'JWT_ALGORITHM': 'HS256',
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': timedelta(days=1),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=1),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
