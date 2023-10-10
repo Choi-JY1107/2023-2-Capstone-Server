@@ -47,14 +47,10 @@ class SignupSerializer(serializers.Serializer):
         password1 = data.get("password1", None)
         password2 = data.get("password2", None)
         phone_number = data.get("phone_number", None)
-        print("-1")
 
         if User.objects.filter(username=username).exists():
-            print("1")
             return {'message': 'username error'}
         if password1 != password2:
-            print("2")
-
             return {'message': 'password error'}
 
         User.objects.create_user(
@@ -63,6 +59,5 @@ class SignupSerializer(serializers.Serializer):
             password=password1,
             phone_number=phone_number
         )
-        print("3")
 
         return {'message': 'SignUp Success'}
