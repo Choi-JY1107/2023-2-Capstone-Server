@@ -9,14 +9,19 @@ jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
-class UserSerializer(serializers.Serializer):
+class UserInfoSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=8)
+    nickname = serializers.CharField(max_length=8)
+    phone_number = serializers.CharField(max_length=15)
+    register_date = serializers.DateTimeField()
+
     class Meta:
         model = User
         fields = '__all__'
 
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=5)
+    username = serializers.CharField(max_length=8)
     password = serializers.CharField(max_length=32)
 
     def validate(self, data):

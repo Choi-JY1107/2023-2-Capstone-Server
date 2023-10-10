@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 
 from users.models import User
-from users.serializers import UserSerializer, LoginSerializer, SignupSerializer
+from users.serializers import UserInfoSerializer, LoginSerializer, SignupSerializer
 
 
 class LoginAPI(APIView):
@@ -34,10 +34,13 @@ class SignupAPI(APIView):
         return JsonResponse(data=serializer.validated_data, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestAPI(APIView):
+class UserInfoAPI(APIView):
     @staticmethod
     def get(request):
-        user = User.objects.all()
-        serializer = UserSerializer(user, many=True)
+        try:
+            user = User.objects.get(username=request.user)
+            serializer = UserInfoSerializer(user)
 
-        return JsonResponse({'data': serializer.data}, safe=False)
+            return JsonResponse(data=serializer.data, safe=False)
+        except Exception as e:
+            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
