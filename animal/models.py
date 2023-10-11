@@ -14,3 +14,13 @@ class Animal(models.Model):
 
     class Meta:
         db_table = 'Animal'
+
+
+class AnimalImage(models.Model):
+    is_learning = models.BooleanField(default=False)
+    register_date = models.DateTimeField(auto_now_add=True, null=False)
+    image = models.ImageField(verbose_name="동물 사진", upload_to="animal", blank=True)
+    animal_id = models.ForeignKey(Animal, on_delete=models.CASCADE, null=False)
+
+    class Meta:
+        db_table = 'Animal_Image'
