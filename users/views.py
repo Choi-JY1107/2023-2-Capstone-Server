@@ -15,7 +15,7 @@ class LoginAPI(APIView):
             serializer = LoginSerializer(data=request.POST)
             serializer.is_valid(raise_exception=True)
 
-            if serializer.validated_data['message'] == 'success':
+            if serializer.validated_data['message'] == 'Login success':
                 return JsonResponse(data=serializer.validated_data, status=status.HTTP_200_OK)
             return JsonResponse(data=serializer.validated_data, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:

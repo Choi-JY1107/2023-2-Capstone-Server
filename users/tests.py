@@ -6,8 +6,7 @@ from .models import User
 
 class LoginViewTestCase(TestCase):
     def setUp(self):
-        self.client = Client()
-        self.instance = User.objects.create_user(username='1test', password='1test')
+        User.objects.create_user(username='1test', password='1test')
 
     def test_view_can_do_success_login(self):
         path = "/users/login/"
