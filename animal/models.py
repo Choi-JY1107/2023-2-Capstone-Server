@@ -20,8 +20,9 @@ class Animal(models.Model):
     def create_animal(data, user):
         animal = Animal.objects.create(
             nickname=data['nickname'],
-            owner_id=user
+            owner=user
         )
+
         return animal.id
 
 
