@@ -10,3 +10,6 @@ class User(AbstractUser):
 
     class Meta:
         db_table = 'Users'
+
+    def __str__(self):
+        return str(self.id)
