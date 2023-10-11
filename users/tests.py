@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from rest_framework import status
 
 from .models import User
-from .serializers import UserInfoSerializer
+
 
 class LoginViewTestCase(TestCase):
     def setUp(self):
@@ -41,13 +41,13 @@ class InfoViewTestCase(TestCase):
     def setUp(self):
         User.objects.create_user(username='infoUser', password='infoUser')
         login_path = "/users/login/"
-        data = {"username": "infoUser", "password": "infoUser"}
-        response = self.client.post(login_path, data)
+        login_data = {"username": "infoUser", "password": "infoUser"}
 
-        token = response.json()['token']
-        info_path = "/users/info/"
-        headers = {'Authorization': 'Bearer ' + token}
-        self.response = self.client.get(info_path, headers=headers)
+        login_response = self.client.post(login_path, login_data)
+        token = login_response.json()['token']
+        self.headers = {'Authorization': 'Bearer ' + token}
 
     def test_view_can_search_instance(self):
+        info_path = "/users/info/"
+        self.response = self.client.get(info_path, headers=self.headers)
         self.assertEquals('infoUser', self.response.json()['username'])

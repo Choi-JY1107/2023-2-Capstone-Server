@@ -30,13 +30,15 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(username=username, password=password)
 
         if user is None:
-            return {'message': 'fail'}
+            if User.objects.filter(username=username).exists():
+                return {'message': 'Password is incorrect'}
+            return {'message': 'There is no username.'}
 
         payload = jwt_payload_handler(user)
         token = jwt_encode_handler(payload)
 
         update_last_login(None, user)
-        return {'message': 'success', 'token': token}
+        return {'message': 'Login success', 'token': token}
 
 
 class SignupSerializer(serializers.Serializer):
@@ -54,9 +56,9 @@ class SignupSerializer(serializers.Serializer):
         phone_number = data.get("phone_number", None)
 
         if User.objects.filter(username=username).exists():
-            return {'message': 'username error'}
+            return {'message': 'Username Error'}
         if password1 != password2:
-            return {'message': 'password error'}
+            return {'message': 'Password Error'}
 
         User.objects.create_user(
             username=username,
