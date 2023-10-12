@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Animal
+from .models import Animal, AnimalImage
 
 
 class AnimalInfoSerializer(serializers.Serializer):
@@ -13,4 +13,15 @@ class AnimalInfoSerializer(serializers.Serializer):
 
     class Meta:
         model = Animal
+        fields = '__all__'
+
+
+class AnimalImageSerializer(serializers.Serializer):
+    is_learning = serializers.BooleanField()
+    register_date = serializers.DateTimeField()
+    image = serializers.ImageField()
+    animal_id = serializers.CharField()
+
+    class Meta:
+        model = AnimalImage
         fields = '__all__'

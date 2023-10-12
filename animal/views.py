@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 from animal.models import Animal, AnimalImage
-from animal.serializers import AnimalInfoSerializer
+from animal.serializers import AnimalInfoSerializer, AnimalImageSerializer
 
 
 # animal 관련
@@ -38,11 +38,6 @@ class DetailAnimalAPI(APIView):
     def get(request, pk):
         try:
             animal = Animal.objects.get(id=pk)
-
-            if animal is None:
-                return JsonResponse(data={"message": "There is no animal whose id is %d" + pk},
-                                    status=status.HTTP_400_BAD_REQUEST)
-
             serializer = AnimalInfoSerializer(animal)
             return JsonResponse(data={"data": serializer.data, "message": "Animal Info Success"}, status=200)
 
@@ -50,13 +45,14 @@ class DetailAnimalAPI(APIView):
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# TODO
 class DetailAnimalImageAPI(APIView):
 
     @staticmethod
     def get(request, pk):
         try:
             animal_image = AnimalImage.objects.get(id=pk)
+            serializer = AnimalImageSerializer(animal_image)
+            return JsonResponse(data={"data": serializer.data, "message": "Animal Image Success"}, status=200)
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
