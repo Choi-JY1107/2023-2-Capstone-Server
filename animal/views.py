@@ -2,8 +2,7 @@ from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.views import APIView
 
-from users.models import User
-from animal.models import Animal
+from animal.models import Animal, AnimalImage
 from animal.serializers import AnimalInfoSerializer
 
 
@@ -21,18 +20,19 @@ class CreateAnimalAPI(APIView):
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# TODO
 class CreateAnimalImageAPI(APIView):
     @staticmethod
     def post(request):
         try:
-            pass
+            AnimalImage.create_animal_image(request.FILES['image'], request.data['animal_id'])
+            return JsonResponse(data={'message': 'id = %d인 User가 id = %s인 Animal의 사진 한 장을 등록하였습니다.'
+                                                 % (request.user.id, request.data['animal_id'])},
+                                status=status.HTTP_201_CREATED)
 
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# TODO
 class DetailAnimalAPI(APIView):
     @staticmethod
     def get(request, pk):
@@ -54,10 +54,9 @@ class DetailAnimalAPI(APIView):
 class DetailAnimalImageAPI(APIView):
 
     @staticmethod
-    def get(request):
+    def get(request, pk):
         try:
-            pass
-
+            animal_image = AnimalImage.objects.get(id=pk)
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

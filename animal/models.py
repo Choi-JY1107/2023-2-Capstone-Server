@@ -1,4 +1,6 @@
+from datetime import datetime
 from django.db import models
+import uuid
 
 from users.models import User
 
@@ -36,4 +38,17 @@ class AnimalImage(models.Model):
         db_table = 'Animal_Image'
 
     def __str__(self):
-        return str(self.id)
+        return str(self.image)
+
+    def create_animal_image(image, animal_id):
+        animal = Animal.objects.get(id=animal_id)
+        image.name = str(datetime.today()) + str(uuid.uuid4()) + '.jpg'
+        animal_img = AnimalImage.objects.create(
+            image=image,
+            animal_id=animal
+        )
+
+        if animal.main_img_id == -1:
+            animal.main_img = str(animal_img)
+            animal.main_img_id = animal_img.id
+        animal.save()
