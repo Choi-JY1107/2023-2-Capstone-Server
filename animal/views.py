@@ -14,7 +14,7 @@ class CreateAnimalAPI(APIView):
         try:
             animal = Animal.create_animal(data=request.data, user=request.user)
             return JsonResponse(data={'message': "id = %d인 User 가 id = %s인 Animal을 등록하였습니다." % (request.user.id, animal)},
-                                status=status.HTTP_200_OK)
+                                status=status.HTTP_201_CREATED)
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
