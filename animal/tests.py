@@ -38,7 +38,7 @@ class AnimalInfoViewTestCase(TestCase):
     def test_animal_info_view_can_find_instance(self):
         info_path = "/animal/info/1"
         info_response = self.client.get(path=info_path, headers=self.headers)
-        self.assertEquals("test", info_response.json()['nickname'])
+        self.assertEquals("test", info_response.json()['data']['nickname'])
 
 # class AnimalImageCreateViewTestCase(TestCase):
 #     def setUpTestData(self):
