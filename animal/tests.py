@@ -1,8 +1,11 @@
+import io
+
 from django.test import TestCase, Client
 from rest_framework import status
 
 from animal.models import Animal
 from users.models import User
+from PIL import Image
 
 
 class AnimalCreateViewTestCase(TestCase):
@@ -40,11 +43,34 @@ class AnimalInfoViewTestCase(TestCase):
         info_response = self.client.get(path=info_path, headers=self.headers)
         self.assertEquals("test", info_response.json()['data']['nickname'])
 
-# class AnimalImageCreateViewTestCase(TestCase):
-#     def setUpTestData(self):
-#         self.login_path = "/users/login/"
-#         self.login_data = {"username": "testUser", "password": "testUser"}
-#         self.animal_path = "/animal/create/"
-#         self.animal_data = {"nickname": "test"}
-#         self.image_path = "/animal/image/"
-#         self.image_data = {""}
+    def test_animal_info_view_can_check_pk(self):
+        info_path = "/animal/info/10"
+        info_response = self.client.get(path=info_path, headers=self.headers)
+        self.assertEquals(status.HTTP_400_BAD_REQUEST, info_response.status_code)
+
+
+class AnimalImageCreateViewTestCase(TestCase):
+    def setUp(self):
+        animal_data = {"nickname": "test"}
+        User.objects.create_user(username="testUser", password="testUser")
+        Animal.create_animal(data=animal_data, user=User.objects.get(username="testUser"))
+
+        login_path = "/users/login/"
+        login_data = {"username": "testUser", "password": "testUser"}
+        login_response = self.client.post(login_path, login_data)
+        token = login_response.json()['token']
+        self.headers = {'Authorization': 'Bearer ' + token}
+
+        self.file = io.BytesIO()
+        image = Image.open("C:/Users/ASUS/PycharmProjects/2023_2_Capstone_Server/media/animal/2023-10-13_021722"
+                           ".111133477a7228-fb66-44f5-a76b-5e0a1029104b.jpg")
+        image.save(self.file, 'png')
+        self.file.seek(0)
+
+    def test_animal_image_view_can_create_instance(self):
+        image_path = "/animal/image/create/"
+        image_data = {"animal_id": "1", "image": self.file}
+        image_response = self.client.post(image_path, image_data, headers=self.headers)
+        print(image_response.json())
+        self.assertEquals(status.HTTP_201_CREATED, image_response.status_code)
+
