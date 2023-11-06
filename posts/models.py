@@ -20,7 +20,7 @@ class Post(models.Model):
 class PostImage(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=False)
     image_id = models.ForeignKey(AnimalImage, on_delete=models.CASCADE, null=False)
-    register_data = models.DateTimeField(auto_now_add=True, null=False)
+    register_date = models.DateTimeField(auto_now_add=True, null=False)
 
     class Meta:
         db_table = 'Post_Image'
@@ -32,7 +32,7 @@ class PostImage(models.Model):
 class PostLike(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=False)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-    register_data = models.DateTimeField(auto_now_add=True, null=False)
+    register_date = models.DateTimeField(auto_now_add=True, null=False)
 
     class Meta:
         db_table = 'Post_Like'
