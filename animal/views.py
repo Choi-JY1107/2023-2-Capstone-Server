@@ -106,3 +106,16 @@ class ListAnimalImageAPI(APIView):
 
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListMyAnimalAPI(APIView):
+
+    @staticmethod
+    def get(request):
+        try:
+            print(type(request.user))
+            animal = Animal.objects.filter(owner=request.user)
+            serializer = AnimalInfoSerializer(animal, many=True)
+            return JsonResponse(data={"data": serializer.data, "message": "Animal List Success"}, status=200)
+        except Exception as e:
+            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
