@@ -64,3 +64,23 @@ class PostLike(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+class MissingImage(models.Model):
+    register_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    image = models.ImageField(verbose_name="실종 동물 사진", upload_to="missing", blank=True)
+    register_date = models.DateTimeField(auto_now_add=True, null=False)
+
+    class Meta:
+        db_table = 'Missing_Image'
+
+    def __str__(self):
+        return str(self.id)
+
+    def create_missing_image(image, user):
+        missing_image = PostImage.objects.create(
+            image=image,
+            register_id=user,
+        )
+
+        return missing_image.id
