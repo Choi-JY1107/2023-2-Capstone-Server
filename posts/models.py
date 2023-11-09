@@ -78,7 +78,9 @@ class MissingImage(models.Model):
         return str(self.id)
 
     def create_missing_image(image, user):
-        missing_image = PostImage.objects.create(
+        print(str(datetime.today()) + str(uuid.uuid4()) + '.jpg')
+        image.name = str(datetime.today()) + str(uuid.uuid4()) + '.jpg'
+        missing_image = MissingImage.objects.create(
             image=image,
             register_id=user,
         )
