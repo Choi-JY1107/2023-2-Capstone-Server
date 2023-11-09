@@ -4,12 +4,10 @@ from .models import Animal, AnimalImage
 
 
 class AnimalInfoSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
     nickname = serializers.CharField(max_length=8)
-    owner_id = serializers.CharField()
     main_img_id = serializers.IntegerField()
     main_img = serializers.CharField(max_length=255)
-    is_missing = serializers.BooleanField()
-    register_date = serializers.DateTimeField()
 
     class Meta:
         model = Animal
