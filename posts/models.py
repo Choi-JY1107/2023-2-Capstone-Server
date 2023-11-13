@@ -50,9 +50,11 @@ class PostImage(models.Model):
         )
 
         if post.main_img_id == -1:
-            post.main_img = str(post_image)
+            post.main_img = str(image.name)
             post.main_img_id = post_image.id
         post.save()
+
+        return post_image
 
 
 class PostLike(models.Model):

@@ -21,6 +21,20 @@ class CreatePostAPI(APIView):
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class CreatePostImageAPI(APIView):
+    @staticmethod
+    def post(request):
+        try:
+            post_image = PostImage.create_post_image(request.FILES['image'], request.data['post_id'])
+            return JsonResponse(data={'message': 'id = %s인 Post에 id = %s인 Post 사진을 등록하였습니다.'
+                                                 % (request.data['post_id'], post_image)},
+                                status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class CreateMissingAPI(APIView):
     @staticmethod
     def post(request):
@@ -59,7 +73,6 @@ class AlertMissingAPI(APIView):
             animal.missing_location = animal_location
             animal.save()
 
-
             # TODO 사용자 위치 정보에 알맞는 사람만 알림 보내는 로직 추가
             title = "실종 신고"
             body = f"'{animal.nickname}' 이름을 가진 동물을 찾습니다."
@@ -80,14 +93,14 @@ class ListFeedsAPI(APIView):
         try:
             feed_list = []
             posts = Post.objects.all().order_by('register_date')
-            post_serializer = FeedPostSerializer(posts)
+            post_serializer = FeedPostSerializer(posts, many=True)
             for post in posts:
-                print(111111)
                 post_images = PostImage.objects.filter(post_id=post).order_by('register_date')
                 post_images_serializer = FeedPostImageSerializer(post_images, many=True)
-                feed = {"post": post_serializer, "images": post_images_serializer}
-                feed_list.insert(feed)
-
-                return JsonResponse(data={"message": f"{len(posts)}개의 피드를 불렀습니다"}, status=status.HTTP_200_OK)
+                # feed = {"post": post_serializer, "images": post_images_serializer}
+                # feed_list.append(feed)
+            print(post_serializer)
+            return JsonResponse(data={"feeds": post_serializer.data, "message": f"{len(posts)}개의 피드를 불렀습니다"},
+                                status=status.HTTP_200_OK)
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
