@@ -69,3 +69,11 @@ class AlertMissingAPI(APIView):
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class ListFeedsAPI(APIView):
+    @staticmethod
+    def post(request):
+        try:
+            return JsonResponse(data={"message": "개의 디바이스에 알림 전송 완료"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
