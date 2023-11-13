@@ -11,7 +11,7 @@ class PostAdmin(admin.ModelAdmin):
 
 class PostImageAdmin(admin.ModelAdmin):
     list_display = (
-        'post_id', 'image_id', 'register_date'
+        'post_id', 'image', 'register_date'
     )
     search_fields = ['post_id', 'image_id']
 

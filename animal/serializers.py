@@ -9,6 +9,7 @@ class AnimalInfoSerializer(serializers.Serializer):
     main_img_id = serializers.IntegerField()
     main_img = serializers.CharField(max_length=255)
     characteristic = serializers.CharField(max_length=500)
+    missing_location = serializers.CharField(max_length=500)
 
     class Meta:
         model = Animal

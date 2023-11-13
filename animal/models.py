@@ -12,6 +12,7 @@ class Animal(models.Model):
     main_img_id = models.IntegerField(default=-1)
     main_img = models.CharField(max_length=255, null=True, blank=True, default='')
     is_missing = models.BooleanField(default=False)
+    missing_location = models.CharField(max_length=500, default='')
     register_date = models.DateTimeField(auto_now_add=True, null=False)
 
     class Meta:

@@ -31,7 +31,7 @@ class Post(models.Model):
 
 class PostImage(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=False)
-    image_id = models.ForeignKey(AnimalImage, on_delete=models.CASCADE, null=False)
+    image = models.ImageField(verbose_name="post 사진", upload_to="posts", blank=True)
     register_date = models.DateTimeField(auto_now_add=True, null=False)
 
     class Meta:
@@ -40,12 +40,13 @@ class PostImage(models.Model):
     def __str__(self):
         return str(self.id)
 
-    def create_post_image(post_id, image_id):
+    def create_post_image(image, post_id):
         post = Post.objects.get(id=post_id)
-        image = AnimalImage.objects.get(id=image_id)
+
+        image.name = str(datetime.today()) + str(uuid.uuid4()) + '.jpg'
         post_image = PostImage.objects.create(
-            post=post,
-            image=image
+            image=image,
+            post_id=post
         )
 
         if post.main_img_id == -1:
@@ -82,7 +83,7 @@ class MissingImage(models.Model):
         image.name = str(datetime.today()) + str(uuid.uuid4()) + '.jpg'
         missing_image = MissingImage.objects.create(
             image=image,
-            register_id=user,
+            register_id=user
         )
 
         return missing_image.id

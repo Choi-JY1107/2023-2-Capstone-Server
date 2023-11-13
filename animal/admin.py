@@ -5,7 +5,8 @@ from .models import Animal, AnimalImage
 class AnimalAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'nickname', 'owner', 'main_img_id',
-        'main_img', 'is_missing', 'register_date'
+        'main_img', 'is_missing', 'register_date',
+        'characteristic', 'missing_location',
     )
     search_fields = ['id', 'nickname']
 
