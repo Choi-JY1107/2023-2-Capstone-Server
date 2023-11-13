@@ -8,6 +8,7 @@ from users.models import User
 class Animal(models.Model):
     nickname = models.CharField(verbose_name='반려동물 이름', max_length=8, null=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    characteristic = models.CharField(verbose_name='반려동물 특징', max_length=500, null=True, blank=True)
     main_img_id = models.IntegerField(default=-1)
     main_img = models.CharField(max_length=255, null=True, blank=True, default='')
     is_missing = models.BooleanField(default=False)
