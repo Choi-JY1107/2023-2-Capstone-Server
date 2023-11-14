@@ -93,14 +93,13 @@ class ListFeedsAPI(APIView):
         try:
             feed_list = []
             posts = Post.objects.all().order_by('register_date')
-            post_serializer = FeedPostSerializer(posts, many=True)
             for post in posts:
                 post_images = PostImage.objects.filter(post_id=post).order_by('register_date')
+                post_serializer = FeedPostSerializer(post)
                 post_images_serializer = FeedPostImageSerializer(post_images, many=True)
-                # feed = {"post": post_serializer, "images": post_images_serializer}
-                # feed_list.append(feed)
-            print(post_serializer)
-            return JsonResponse(data={"feeds": post_serializer.data, "message": f"{len(posts)}개의 피드를 불렀습니다"},
+                feed = {"post": post_serializer.data, "images": post_images_serializer.data}
+                feed_list.append(feed)
+            return JsonResponse(data={"feeds": feed_list, "message": f"{len(posts)}개의 피드를 불렀습니다"},
                                 status=status.HTTP_200_OK)
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
