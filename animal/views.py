@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 
 from animal.models import Animal, AnimalImage
 from animal.serializers import AnimalInfoSerializer, AnimalImageSerializer
+from users.models import User
 
 
 # animal 관련
@@ -119,3 +120,18 @@ class ListMyAnimalAPI(APIView):
             return JsonResponse(data={"data": serializer.data, "message": "Animal List Success"}, status=200)
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListAllAnimalAPI(APIView):
+    @staticmethod
+    def get(request):
+        try:
+            manager = User.objects.get(id=1)
+            if request.user != manager:
+                raise Exception("관리자만 사용 가능한 api입니다.")
+            animal_image = AnimalImage.objects.all()
+            serializer = AnimalImageSerializer(animal_image, many=True)
+            return JsonResponse(data={"data": serializer.data, "message": f"{len(serializer.data)}개의 데이터를 불러왔습니다."},
+                                status=status.HTTP_200_OK)
+        except Exception as e:
+            return JsonResponse(data={"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
