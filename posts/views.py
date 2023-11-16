@@ -1,12 +1,16 @@
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.views import APIView
+from PIL import Image
 
 from posts.models import Post, PostImage, MissingImage
 from posts.serializers import FeedPostSerializer, FeedPostImageSerializer, MissingListSerializer
 from animal.models import Animal
+from animal.serializers import AnimalInfoSerializer
 from users.models import UserDevice
+
 from util.send_to_firebase_cloud_messaging import send_to_firebase_cloud_messaging
+from util.pet_classification import predict_pet
 
 
 class CreatePostAPI(APIView):
@@ -40,8 +44,22 @@ class CreateMissingAPI(APIView):
     def post(request):
         try:
             missing = MissingImage.create_missing_image(request.FILES['image'], request.user)
+
+            image = Image.open(request.FILES['image'])
+            expected_pet_list = predict_pet(image)
+
+            result = []
+            for index in expected_pet_list:
+                animal = Animal.objects.get(id=index[0])
+                if animal.is_missing:
+                    serializer = AnimalInfoSerializer(animal)
+                    result.append(serializer.data)
+
+            if len(result) > 5:
+                result = result[:5]
             return JsonResponse(data={'message': 'id = %d인 User가 id = %d인 실종 사진을 등록하였습니다.'
-                                                 % (request.user.id, missing)},
+                                                 % (request.user.id, missing),
+                                      "rank": result},
                                 status=status.HTTP_201_CREATED)
 
         except Exception as e:
