@@ -31,7 +31,7 @@ class Post(models.Model):
 
 class PostImage(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=False)
-    image = models.ForeignKey(AnimalImage, on_delete=models.CASCADE, null=False)
+    image = models.ForeignKey(AnimalImage, on_delete=models.CASCADE, null=False, related_name='animal_image')
     register_date = models.DateTimeField(auto_now_add=True, null=False)
 
     class Meta:
@@ -40,17 +40,17 @@ class PostImage(models.Model):
     def __str__(self):
         return str(self.id)
 
-    def create_post_image(animal_image, post_id):
+    def create_post_image(animal_image_id, post_id):
         post = Post.objects.get(id=post_id)
+        animal_image = AnimalImage.objects.get(id=animal_image_id)
 
-        image.name = str(datetime.today()) + str(uuid.uuid4()) + '.jpg'
         post_image = PostImage.objects.create(
-            image=image,
-            post_id=post
+            post_id=post,
+            image=animal_image
         )
 
         if post.main_img_id == -1:
-            post.main_img = str(image.name)
+            post.main_img = str(animal_image)
             post.main_img_id = post_image.id
         post.save()
 

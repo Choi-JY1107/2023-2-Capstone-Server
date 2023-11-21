@@ -30,7 +30,7 @@ class CreatePostImageAPI(APIView):
     @staticmethod
     def post(request):
         try:
-            post_image = PostImage.create_post_image(request.FILES['image'], request.data['post_id'])
+            post_image = PostImage.create_post_image(request.data['animal_image_id'], request.data['post_id'])
             return JsonResponse(data={'message': 'id = %s인 Post에 id = %s인 Post 사진을 등록하였습니다.'
                                                  % (request.data['post_id'], post_image)},
                                 status=status.HTTP_201_CREATED)
@@ -114,6 +114,7 @@ class ListFeedsAPI(APIView):
             for post in posts:
                 post_images = PostImage.objects.filter(post_id=post).order_by('register_date')
                 post_serializer = FeedPostSerializer(post)
+                print(post_images)
                 post_images_serializer = FeedPostImageSerializer(post_images, many=True)
                 feed = {"post": post_serializer.data, "images": post_images_serializer.data}
                 feed_list.append(feed)

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from users.models import User
+from animal.models import AnimalImage
 from .models import Post, PostImage, MissingImage
 
 
@@ -17,10 +18,10 @@ class FeedPostSerializer(serializers.Serializer):
 
 
 class FeedPostImageSerializer(serializers.Serializer):
-    image = serializers.ImageField()
+    image = serializers.ImageField(source='image.image')
 
     class Meta:
-        model = PostImage
+        model = AnimalImage
         fields = '__all__'
 
 
