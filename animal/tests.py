@@ -11,14 +11,14 @@ from PIL import Image
 class AnimalCreateViewTestCase(TestCase):
     def setUp(self):
         User.objects.create_user(username='testUser', password='testUser')
-        login_path = "/users/login/"
+        login_path = "/user/login"
         login_data = {"username": "testUser", "password": "testUser"}
         login_response = self.client.post(login_path, login_data)
         token = login_response.json()['token']
         self.headers = {'Authorization': 'Bearer ' + token}
 
     def test_animal_view_can_create_instance(self):
-        path = "/animal/create/"
+        path = "/animal/create"
         data = {"nickname": "test"}
         response = self.client.post(path, data, headers=self.headers)
 
@@ -31,7 +31,7 @@ class AnimalInfoViewTestCase(TestCase):
         User.objects.create_user(username="testUser", password="testUser")
         Animal.create_animal(data=self.animal_data, user=User.objects.get(username="testUser"))
 
-        login_path = "/users/login/"
+        login_path = "/user/login"
         login_data = {"username": "testUser", "password": "testUser"}
         login_response = self.client.post(login_path, login_data)
 
@@ -39,12 +39,12 @@ class AnimalInfoViewTestCase(TestCase):
         self.headers = {'Authorization': 'Bearer ' + token}
 
     def test_animal_info_view_can_find_instance(self):
-        info_path = "/animal/info/1"
+        info_path = "/animal/1"
         info_response = self.client.get(path=info_path, headers=self.headers)
         self.assertEquals("test", info_response.json()['data']['nickname'])
 
     def test_animal_info_view_can_check_pk(self):
-        info_path = "/animal/info/10"
+        info_path = "/animal/10"
         info_response = self.client.get(path=info_path, headers=self.headers)
         self.assertEquals(status.HTTP_400_BAD_REQUEST, info_response.status_code)
 
@@ -55,7 +55,7 @@ class AnimalImageCreateViewTestCase(TestCase):
         User.objects.create_user(username="testUser", password="testUser")
         Animal.create_animal(data=animal_data, user=User.objects.get(username="testUser"))
 
-        login_path = "/users/login/"
+        login_path = "/user/login"
         login_data = {"username": "testUser", "password": "testUser"}
         login_response = self.client.post(login_path, login_data)
         token = login_response.json()['token']
@@ -67,7 +67,7 @@ class AnimalImageCreateViewTestCase(TestCase):
         self.file.seek(0)
 
     def test_animal_image_view_can_create_instance(self):
-        image_path = "/animal/image/create/"
+        image_path = "/animal/image/create"
         image_data = {"animal_id": "1", "image": self.file}
         image_response = self.client.post(image_path, image_data, headers=self.headers)
         self.assertEquals(status.HTTP_201_CREATED, image_response.status_code)
@@ -79,7 +79,7 @@ class AnimalImageInfoViewTestCase(TestCase):
         animal_data = {"nickname": "test"}
         User.objects.create_user(username="testUser", password="testUser")
         Animal.create_animal(data=animal_data, user=User.objects.get(username="testUser"))
-        login_path = "/users/login/"
+        login_path = "/user/login"
         login_data = {"username": "testUser", "password": "testUser"}
         login_response = self.client.post(login_path, login_data)
         token = login_response.json()['token']
@@ -91,12 +91,12 @@ class AnimalImageInfoViewTestCase(TestCase):
         image.save(file, 'png')
         file.seek(0)
 
-        image_path = "/animal/image/create/"
+        image_path = "/animal/image/create"
         image_data = {"animal_id": "1", "image": file}
         self.client.post(image_path, image_data, headers=self.headers)
 
     def test_animal_image_view_can_find_instance(self):
-        image_path = "/animal/image/info/1"
+        image_path = "/animal/image/1"
         image_response = self.client.get(image_path, headers=self.headers)
         self.assertEquals(status.HTTP_200_OK, image_response.status_code)
 

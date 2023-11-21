@@ -3,10 +3,10 @@ from posts.views import (CreatePostAPI, CreatePostImageAPI,CreateMissingAPI, Lis
                          AlertMissingAPI, ListFeedsAPI)
 
 urlpatterns = [
-    path("create/", CreatePostAPI.as_view()),
-    path("images/create/", CreatePostImageAPI.as_view()),
-    path("feeds/", ListFeedsAPI.as_view()),
-    path("missing/create/", CreateMissingAPI.as_view()),
-    path("missing/list/", ListMissingAPI.as_view()),
-    path("missing/alert/", AlertMissingAPI.as_view()),
+    path("create", CreatePostAPI.as_view()),
+    path("image/create", CreatePostImageAPI.as_view()),
+    path("feed", ListFeedsAPI.as_view()),
+    path("missing/create", CreateMissingAPI.as_view()),
+    path("missing/list", ListMissingAPI.as_view()),
+    path("missing/alert", AlertMissingAPI.as_view()),
 ]

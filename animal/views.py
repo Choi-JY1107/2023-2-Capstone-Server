@@ -21,6 +21,26 @@ class CreateAnimalAPI(APIView):
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class DetailAnimalAPI(APIView):
+    @staticmethod
+    def get(request, pk):
+        try:
+            animal = Animal.objects.get(id=pk)
+            serializer = AnimalInfoSerializer(animal)
+            return JsonResponse(data={"data": serializer.data, "message": "Animal Info Success"}, status=200)
+
+        except Exception as e:
+            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def delete(request):
+        try:
+            pass
+
+        except Exception as e:
+            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class CreateAnimalImageAPI(APIView):
     @staticmethod
     def post(request):
@@ -29,18 +49,6 @@ class CreateAnimalImageAPI(APIView):
             return JsonResponse(data={'message': 'id = %d인 User가 id = %s인 Animal의 사진 한 장을 등록하였습니다.'
                                                  % (request.user.id, request.data['animal_id'])},
                                 status=status.HTTP_201_CREATED)
-
-        except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class DetailAnimalAPI(APIView):
-    @staticmethod
-    def get(request, pk):
-        try:
-            animal = Animal.objects.get(id=pk)
-            serializer = AnimalInfoSerializer(animal)
-            return JsonResponse(data={"data": serializer.data, "message": "Animal Info Success"}, status=200)
 
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -57,22 +65,6 @@ class DetailAnimalImageAPI(APIView):
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
-# TODO
-class DeleteAnimalAPI(APIView):
-
-    @staticmethod
-    def delete(request):
-        try:
-            pass
-
-        except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-# TODO
-class DeleteAnimalImageAPI(APIView):
-
     @staticmethod
     def delete(request):
         try:
@@ -85,9 +77,9 @@ class DeleteAnimalImageAPI(APIView):
 class ListAnimalAPI(APIView):
 
     @staticmethod
-    def get(request):
+    def get(request, pk):
         try:
-            animal = Animal.objects.all()
+            animal = Animal.objects.filter(owner=request.user)
             serializer = AnimalInfoSerializer(animal, many=True)
             return JsonResponse(data={"data": serializer.data, "message": "Animal List Success"}, status=200)
         except Exception as e:
@@ -105,19 +97,6 @@ class ListAnimalImageAPI(APIView):
 
             return JsonResponse(data={"data": serializer.data, "message": "Animal Image List Success"}, status=200)
 
-        except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ListMyAnimalAPI(APIView):
-
-    @staticmethod
-    def get(request):
-        try:
-            print(type(request.user))
-            animal = Animal.objects.filter(owner=request.user)
-            serializer = AnimalInfoSerializer(animal, many=True)
-            return JsonResponse(data={"data": serializer.data, "message": "Animal List Success"}, status=200)
         except Exception as e:
             return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

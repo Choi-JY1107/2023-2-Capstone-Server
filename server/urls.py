@@ -22,9 +22,9 @@ from server.views import index
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("users/", include("users.urls")),
-    path("posts/", include("posts.urls")),
-    path("animals/", include("animal.urls")),
+    path("user/", include("users.urls")),
+    path("post/", include("posts.urls")),
+    path("animal/", include("animal.urls")),
     path("", index),
 ]
 

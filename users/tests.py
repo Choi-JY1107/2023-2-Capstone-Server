@@ -9,14 +9,14 @@ class LoginViewTestCase(TestCase):
         User.objects.create_user(username='1test', password='1test')
 
     def test_view_can_do_success_login(self):
-        path = "/users/login/"
+        path = "/user/login"
         data = {"username": "1test", "password": "1test"}
         response = self.client.post(path, data)
 
         self.assertEquals(response.status_code, status.HTTP_200_OK)
 
     def test_view_can_do_fail_login(self):
-        path = "/users/login/"
+        path = "/user/login"
         data = {"username": "1t", "password": "1test"}
         response = self.client.post(path, data)
 
@@ -39,7 +39,7 @@ class LoginModelTestCase(TestCase):
 class InfoViewTestCase(TestCase):
     def setUp(self):
         User.objects.create_user(username='infoUser', password='infoUser')
-        login_path = "/users/login/"
+        login_path = "/user/login"
         login_data = {"username": "infoUser", "password": "infoUser"}
 
         login_response = self.client.post(login_path, login_data)
@@ -47,6 +47,6 @@ class InfoViewTestCase(TestCase):
         self.headers = {'Authorization': 'Bearer ' + token}
 
     def test_view_can_search_instance(self):
-        info_path = "/users/info/"
+        info_path = "/user/info"
         self.response = self.client.get(info_path, headers=self.headers)
         self.assertEquals('infoUser', self.response.json()['username'])
