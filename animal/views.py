@@ -105,7 +105,7 @@ class DetailAnimalImageAPI(APIView):
 class ListAnimalAPI(APIView):
 
     @staticmethod
-    def get(request, pk):
+    def get(request):
         try:
             animal = Animal.objects.filter(owner=request.user)
             serializer = AnimalInfoSerializer(animal, many=True)
