@@ -45,12 +45,14 @@ class AnimalImage(models.Model):
     def create_animal_image(image, animal_id):
         animal = Animal.objects.get(id=animal_id)
         image.name = str(datetime.today()) + str(uuid.uuid4()) + '.jpg'
-        animal_img = AnimalImage.objects.create(
+        animal_image = AnimalImage.objects.create(
             image=image,
             animal_id=animal
         )
 
         if animal.main_img_id == -1:
-            animal.main_img = str(animal_img)
-            animal.main_img_id = animal_img.id
+            animal.main_img = str(animal_image)
+            animal.main_img_id = animal_image.id
         animal.save()
+
+        return animal_image

@@ -1,10 +1,9 @@
-from django.http import JsonResponse
-from rest_framework import status
 from rest_framework.views import APIView
 
 from animal.models import Animal, AnimalImage
 from animal.serializers import AnimalInfoSerializer, AnimalImageSerializer
 from users.models import User
+from util.response_format import response
 
 
 # animal 관련
@@ -14,11 +13,15 @@ class CreateAnimalAPI(APIView):
     def post(request):
         try:
             animal = Animal.create_animal(data=request.data, user=request.user)
-            return JsonResponse(
-                data={'message': "id = %d인 User 가 id = %s인 Animal을 등록하였습니다." % (request.user.id, animal)},
-                status=status.HTTP_201_CREATED)
+            return response(
+                message="id = %d인 User 가 id = %s인 Animal을 등록하였습니다." % (request.user.id, animal),
+                status=201
+            )
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )
 
 
 class DetailAnimalAPI(APIView):
@@ -27,10 +30,17 @@ class DetailAnimalAPI(APIView):
         try:
             animal = Animal.objects.get(id=pk)
             serializer = AnimalInfoSerializer(animal)
-            return JsonResponse(data={"data": serializer.data, "message": "Animal Info Success"}, status=200)
+            return response(
+                data=serializer.data,
+                message="id = %d인 유저가 id = %d인 Animal 정보를 불러왔습니다." % (request.user.id, pk),
+                status=200
+            )
 
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )
 
     @staticmethod
     def delete(request):
@@ -38,20 +48,28 @@ class DetailAnimalAPI(APIView):
             pass
 
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )
 
 
 class CreateAnimalImageAPI(APIView):
     @staticmethod
     def post(request):
         try:
-            AnimalImage.create_animal_image(request.FILES['image'], request.data['animal_id'])
-            return JsonResponse(data={'message': 'id = %d인 User가 id = %s인 Animal의 사진 한 장을 등록하였습니다.'
-                                                 % (request.user.id, request.data['animal_id'])},
-                                status=status.HTTP_201_CREATED)
+            animal_image = AnimalImage.create_animal_image(request.FILES['image'], request.data['animal_id'])
+            return response(
+                message='id = %d인 User가 id = %s인 Animal의 id = %s인 사진 한 장을 등록하였습니다.'
+                        % (request.user.id, request.data['animal_id'], animal_image),
+                status=201
+            )
 
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )
 
 
 class DetailAnimalImageAPI(APIView):
@@ -61,9 +79,16 @@ class DetailAnimalImageAPI(APIView):
         try:
             animal_image = AnimalImage.objects.get(id=pk)
             serializer = AnimalImageSerializer(animal_image)
-            return JsonResponse(data={"data": serializer.data, "message": "Animal Image Success"}, status=200)
+            return response(
+                data=serializer.data,
+                message="id = %d인 유저가 id = %s인 Animal Image를 요청하였습니다."
+                        % (request.user.id, animal_image),
+                status=200)
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )
 
     @staticmethod
     def delete(request):
@@ -71,7 +96,10 @@ class DetailAnimalImageAPI(APIView):
             pass
 
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )
 
 
 class ListAnimalAPI(APIView):
@@ -81,9 +109,17 @@ class ListAnimalAPI(APIView):
         try:
             animal = Animal.objects.filter(owner=request.user)
             serializer = AnimalInfoSerializer(animal, many=True)
-            return JsonResponse(data={"data": serializer.data, "message": "Animal List Success"}, status=200)
+            return response(
+                data=serializer.data,
+                message="id = %d인 유저가 자신의 반려동물 리스트를 요청하였습니다."
+                        % request.user.id,
+                status=200
+            )
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )
 
 
 class ListAnimalImageAPI(APIView):
@@ -95,10 +131,17 @@ class ListAnimalImageAPI(APIView):
             animal_images = AnimalImage.objects.filter(animal_id=animal)
             serializer = AnimalImageSerializer(animal_images, many=True)
 
-            return JsonResponse(data={"data": serializer.data, "message": "Animal Image List Success"}, status=200)
+            return response(
+                data=serializer.data,
+                message="Animal Image List Success",
+                status=200
+            )
 
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )
 
 
 class ListAllAnimalAPI(APIView):
@@ -110,7 +153,13 @@ class ListAllAnimalAPI(APIView):
                 raise Exception("관리자만 사용 가능한 api입니다.")
             animal_image = AnimalImage.objects.all()
             serializer = AnimalImageSerializer(animal_image, many=True)
-            return JsonResponse(data={"data": serializer.data, "message": f"{len(serializer.data)}개의 데이터를 불러왔습니다."},
-                                status=status.HTTP_200_OK)
+            return response(
+                data=serializer.data,
+                message=f"{len(serializer.data)}개의 데이터를 불러왔습니다.",
+                status=200
+            )
         except Exception as e:
-            return JsonResponse(data={"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )

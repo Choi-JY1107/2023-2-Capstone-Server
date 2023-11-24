@@ -1,9 +1,8 @@
-from django.http import JsonResponse
 from rest_framework.views import APIView
-from rest_framework import status
 from rest_framework.permissions import AllowAny
 
 from users.serializers import UserInfoSerializer, LoginSerializer, SignupSerializer
+from util.response_format import response
 
 
 class LoginAPI(APIView):
@@ -15,11 +14,21 @@ class LoginAPI(APIView):
             serializer = LoginSerializer(data=request.POST)
             serializer.is_valid(raise_exception=True)
 
-            if serializer.validated_data['message'] == 'Login success':
-                return JsonResponse(data=serializer.validated_data, status=status.HTTP_200_OK)
-            return JsonResponse(data=serializer.validated_data, status=status.HTTP_400_BAD_REQUEST)
+            if 'token' in serializer.validated_data:
+                return response(
+                    data=serializer.validated_data,
+                    message='Login Success',
+                    status=200
+                )
+            return response(
+                message=serializer.validated_data['message'],
+                status=400
+            )
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )
 
 
 class SignupAPI(APIView):
@@ -32,11 +41,20 @@ class SignupAPI(APIView):
             serializer.is_valid(raise_exception=True)
 
             if serializer.validated_data['message'] == 'SignUp Success':
-                return JsonResponse(data=serializer.validated_data, status=status.HTTP_201_CREATED)
-            return JsonResponse(data=serializer.validated_data, status=status.HTTP_400_BAD_REQUEST)
+                return response(
+                    message=serializer.validated_data['message'],
+                    status=201
+                )
+            return response(
+                message=serializer.validated_data['message'],
+                status=400
+            )
 
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )
 
 
 class UserInfoAPI(APIView):
@@ -45,6 +63,13 @@ class UserInfoAPI(APIView):
         try:
             serializer = UserInfoSerializer(request.user)
 
-            return JsonResponse(data=serializer.data, safe=False)
+            return response(
+                data=serializer.data,
+                message='id = %d인 유저가 정보를 요청하였습니다.' % request.user.id,
+                status=200
+            )
         except Exception as e:
-            return JsonResponse(data={'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return response(
+                message=str(e),
+                status=400
+            )

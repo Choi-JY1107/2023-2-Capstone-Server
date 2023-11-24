@@ -38,7 +38,7 @@ class LoginSerializer(serializers.Serializer):
         token = jwt_encode_handler(payload)
 
         update_last_login(None, user)
-        return {'message': 'Login success', 'token': token}
+        return {'token': token}
 
 
 class SignupSerializer(serializers.Serializer):
