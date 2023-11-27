@@ -2,10 +2,12 @@ from rest_framework.views import APIView
 from PIL import Image
 
 from posts.models import Post, PostImage, MissingImage
-from posts.serializers import FeedPostSerializer, FeedPostImageSerializer, MissingListSerializer
+from posts.serializers import (FeedPostSerializer, FeedPostImageSerializer,
+                               FeedWriteSerializer, FeedSerializer,
+                               MissingListSerializer)
 from animal.models import Animal
 from animal.serializers import AnimalInfoSerializer
-from users.models import UserDevice
+from users.models import UserDevice, User
 
 from util.send_to_firebase_cloud_messaging import send_to_firebase_cloud_messaging
 from util.pet_classification import predict_pet
@@ -106,10 +108,14 @@ class ListFeedsAPI(APIView):
             posts = Post.objects.all().order_by('register_date')
             for post in posts:
                 post_images = PostImage.objects.filter(post_id=post).order_by('register_date')
+                register = post.register_id
+
                 post_serializer = FeedPostSerializer(post)
-                print(post_images)
                 post_images_serializer = FeedPostImageSerializer(post_images, many=True)
-                feed = {"post": post_serializer.data, "images": post_images_serializer.data}
+                register_serializer = FeedWriteSerializer(register)
+
+                feed = {"post": post_serializer.data, "images": post_images_serializer.data,
+                        "user": register_serializer.data}
                 feed_list.append(feed)
             return response(
                 data=feed_list,

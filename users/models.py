@@ -7,6 +7,8 @@ class User(AbstractUser):
     password = models.CharField(verbose_name="패스워드", max_length=20)
     phone_number = models.CharField(max_length=15, null=True)
     register_date = models.DateTimeField(auto_now_add=True, null=False)
+    profile_image = models.ImageField(null=True, blank=True)
+    personal_consent = models.CharField(default='0', max_length=3)
 
     class Meta:
         db_table = 'Users'

@@ -14,6 +14,7 @@ class UserInfoSerializer(serializers.Serializer):
     nickname = serializers.CharField(max_length=8)
     phone_number = serializers.CharField(max_length=15)
     register_date = serializers.DateTimeField()
+    personal_consent = serializers.CharField(max_length=3)
 
     class Meta:
         model = User

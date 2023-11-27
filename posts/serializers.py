@@ -8,9 +8,6 @@ from .models import Post, PostImage, MissingImage
 class FeedPostSerializer(serializers.Serializer):
     like_count = serializers.IntegerField()
     content = serializers.CharField(max_length=1000)
-    main_img = serializers.CharField(max_length=255)
-    register_id = serializers.CharField()
-    register_date = serializers.DateTimeField()
 
     class Meta:
         model = Post
@@ -23,6 +20,21 @@ class FeedPostImageSerializer(serializers.Serializer):
     class Meta:
         model = AnimalImage
         fields = '__all__'
+
+
+class FeedWriteSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=8)
+    profile_image = serializers.ImageField()
+
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
+class FeedSerializer(serializers.Serializer):
+    post = serializers.ListField(child=serializers.CharField())
+    images = serializers.ListField()
+    user = serializers.ListField()
 
 
 class MissingListSerializer(serializers.Serializer):
