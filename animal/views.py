@@ -2,8 +2,9 @@ from rest_framework.views import APIView
 
 from animal.models import Animal, AnimalImage
 from animal.serializers import AnimalInfoSerializer, AnimalImageSerializer
-from users.models import User
+from users.models import User, UserDevice
 from util.response_format import response
+from util.send_to_firebase_cloud_messaging import send_to_firebase_cloud_messaging
 
 
 # animal 관련
@@ -156,6 +157,39 @@ class ListAllAnimalAPI(APIView):
             return response(
                 data=serializer.data,
                 message=f"{len(serializer.data)}개의 데이터를 불러왔습니다.",
+                status=200
+            )
+        except Exception as e:
+            return response(
+                message=str(e),
+                status=400
+            )
+
+
+class AlertMissingAPI(APIView):
+    @staticmethod
+    def post(request):
+        try:
+            animal_id = request.data['animal_id']
+            animal_location = request.data['missing_location']
+            animal = Animal.objects.get(id=animal_id)
+            if animal.owner != request.user:
+                raise Exception("자신의 반려동물만 실종 신고할 수 있습니다.")
+            animal.is_missing = True
+            animal.missing_location = animal_location
+            animal.save()
+
+            # TODO 사용자 위치 정보에 알맞는 사람만 알림 보내는 로직 추가
+            title = "실종 신고"
+            body = f"'{animal.nickname}' 이름을 가진 동물을 찾습니다."
+            link = "http:127.0.0.1:8000/login"
+
+            device_list = UserDevice.objects.all()
+            for device in device_list:
+                send_to_firebase_cloud_messaging(device.fcm_token, title, body, link)
+
+            return response(
+                message=f"{len(device_list)}개의 디바이스에 id = %s인 동물의 실종 알림을 전송하였습니다." % animal_id,
                 status=200
             )
         except Exception as e:

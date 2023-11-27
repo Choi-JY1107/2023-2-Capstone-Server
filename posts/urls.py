@@ -1,6 +1,6 @@
 from django.urls import path
 from posts.views import (CreatePostAPI, CreatePostImageAPI,CreateMissingAPI, ListMissingAPI,
-                         AlertMissingAPI, ListFeedsAPI)
+                         ListFeedsAPI)
 
 urlpatterns = [
     path("create", CreatePostAPI.as_view()),
@@ -8,5 +8,4 @@ urlpatterns = [
     path("feed", ListFeedsAPI.as_view()),
     path("missing/create", CreateMissingAPI.as_view()),
     path("missing/list", ListMissingAPI.as_view()),
-    path("missing/alert", AlertMissingAPI.as_view()),
 ]
