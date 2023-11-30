@@ -24,6 +24,7 @@ class Animal(models.Model):
     def create_animal(data, user):
         animal = Animal.objects.create(
             nickname=data['nickname'],
+            characteristic=data['characteristic'],
             owner=user
         )
 
