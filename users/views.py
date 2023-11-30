@@ -75,21 +75,22 @@ class UserInfoAPI(APIView):
             )
 
     @staticmethod
-    def patch(request):
+    def put(request):
         try:
             user = request.user
             data = request.data
-            print(user.username)
-            serializer = UserInfoSerializer(user, data=data)
 
-            if serializer.is_valid():
-                print(123)
-                serializer.save()
-
-            print(serializer.data)
+            if user.nickname != data['nickname']:
+                user.nickname = data['nickname']
+            if user.phone_number != data['phone_number']:
+                user.phone_number = data['phone_number']
+            if user.profile_number != int(data['profile_number']):
+                user.profile_number = int(data['profile_number'])
+            if user.personal_consent != bool(data['personal_consent']):
+                user.personal_consent = bool(data['personal_consent'])
+            user.save()
 
             return response(
-                data=serializer.validated_data,
                 message='id = %d인 유저가 정보를 변경하였습니다.' % request.user.id,
                 status=200
             )
@@ -98,5 +99,3 @@ class UserInfoAPI(APIView):
                 message=str(e),
                 status=400
             )
-
-

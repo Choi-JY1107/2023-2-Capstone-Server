@@ -3,12 +3,12 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    nickname = models.CharField(verbose_name="별명", max_length=16, null=False, unique=True)
+    nickname = models.CharField(verbose_name="별명", max_length=16, null=False)
     password = models.CharField(verbose_name="패스워드", max_length=20)
     phone_number = models.CharField(max_length=15, null=True)
     register_date = models.DateTimeField(auto_now_add=True, null=False)
-    profile_image = models.ImageField(null=True, blank=True)
-    personal_consent = models.CharField(default='0', max_length=3)
+    profile_number = models.IntegerField(default=1)
+    personal_consent = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'Users'

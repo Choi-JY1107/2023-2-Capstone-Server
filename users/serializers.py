@@ -10,11 +10,12 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
 class UserInfoSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=8)
-    nickname = serializers.CharField(max_length=8)
+    username = serializers.CharField(max_length=16)
+    nickname = serializers.CharField(max_length=20)
     phone_number = serializers.CharField(max_length=15)
     register_date = serializers.DateTimeField()
-    personal_consent = serializers.CharField(max_length=3)
+    profile_number = serializers.IntegerField()
+    personal_consent = serializers.BooleanField()
 
     class Meta:
         model = User
