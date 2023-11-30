@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from PIL import Image
 
-from posts.models import Post, PostImage, MissingImage, PostLike
+from posts.models import Post, PostImage, MissingImage
 from posts.serializers import (FeedPostSerializer, FeedPostImageSerializer,
                                FeedWriteSerializer, FeedSerializer,
                                MissingListSerializer)
@@ -111,9 +111,9 @@ class ListFeedsAPI(APIView):
                 register = post.register_id
 
                 post_serializer = FeedPostSerializer(post)
+
                 post_images_serializer = FeedPostImageSerializer(post_images, many=True)
                 register_serializer = FeedWriteSerializer(register)
-
                 feed = {"post": post_serializer.data, "images": post_images_serializer.data,
                         "user": register_serializer.data}
                 feed_list.append(feed)
@@ -131,31 +131,20 @@ class ListFeedsAPI(APIView):
 
 class LikeAPI(APIView):
     @staticmethod
-    def patch(request):
+    def get(request, post_id):
         try:
             user = request.user
-            post = Post.objects.filter(id=request.data['post_id'])
+            post = Post.objects.get(id=post_id)
 
-            print(user)
-            print(post)
-
-            print(1)
-            post_like = PostLike.objects.filter(user_id=user, post_id=post)
-            print(2)
-            if post_like is None:
-
-                print(3)
-
-                PostLike.create_post_like(user, post)
+            if post.like_users.filter(id=user.id).exists():
+                post.like_users.remove(user)
+                message = "id = %s인 유저가 id = %s인 게시글의 좋아요를 취소하였습니다." % (user.id, post.id)
             else:
-                print(4)
-
-                post_like.delete()
-
-            print(5)
+                post.like_users.add(user)
+                message = "id = %s인 유저가 id = %s인 게시글의 좋아요를 눌렀습니다." % (user.id, post.id)
 
             return response(
-                message="성공!",
+                message=message,
                 status=200
             )
 

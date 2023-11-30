@@ -7,8 +7,12 @@ from .models import Post, PostImage, MissingImage
 
 class FeedPostSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    like_count = serializers.IntegerField()
+    like_count = serializers.SerializerMethodField()
     content = serializers.CharField(max_length=1000)
+
+    @staticmethod
+    def get_like_count(obj):
+        return obj.like_users.count()
 
     class Meta:
         model = Post

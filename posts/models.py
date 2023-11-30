@@ -7,12 +7,12 @@ from animal.models import AnimalImage
 
 
 class Post(models.Model):
-    like_count = models.PositiveIntegerField(default=0)
     content = models.CharField(max_length=1000, null=True)
     main_img_id = models.IntegerField(default=-1)
     main_img = models.CharField(max_length=255, null=True, blank=True, default='')
     register_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     register_date = models.DateTimeField(auto_now_add=True, null=False)
+    like_users = models.ManyToManyField(User, related_name='like_users')
 
     class Meta:
         db_table = 'Post'
@@ -55,27 +55,6 @@ class PostImage(models.Model):
         post.save()
 
         return post_image
-
-
-class PostLike(models.Model):
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=False)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-    register_date = models.DateTimeField(auto_now_add=True, null=False)
-
-    class Meta:
-        db_table = 'Post_Like'
-
-    def __str__(self):
-        return str(self.id)
-
-    def create_post_like(post, user):
-        post_like = PostLike.objects.create(
-            post_id=post,
-            user_id=user
-        )
-        post_like.save()
-
-        return post_like.id
 
 
 class MissingImage(models.Model):
