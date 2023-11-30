@@ -6,6 +6,10 @@ from users.models import User, UserDevice
 from util.response_format import response
 from util.send_to_firebase_cloud_messaging import send_to_firebase_cloud_messaging
 
+import urllib3
+import json
+import base64
+
 
 # animal 관련
 class CreateAnimalAPI(APIView):
@@ -144,28 +148,6 @@ class ListAnimalImageAPI(APIView):
                 status=400
             )
 
-
-class ListAllAnimalAPI(APIView):
-    @staticmethod
-    def get(request):
-        try:
-            manager = User.objects.get(id=1)
-            if request.user != manager:
-                raise Exception("관리자만 사용 가능한 api입니다.")
-            animal_image = AnimalImage.objects.all()
-            serializer = AnimalImageSerializer(animal_image, many=True)
-            return response(
-                data=serializer.data,
-                message=f"{len(serializer.data)}개의 데이터를 불러왔습니다.",
-                status=200
-            )
-        except Exception as e:
-            return response(
-                message=str(e),
-                status=400
-            )
-
-
 class AlertMissingAPI(APIView):
     @staticmethod
     def post(request):
@@ -190,6 +172,56 @@ class AlertMissingAPI(APIView):
 
             return response(
                 message=f"{len(device_list)}개의 디바이스에 id = %s인 동물의 실종 알림을 전송하였습니다." % animal_id,
+                status=200
+            )
+        except Exception as e:
+            return response(
+                message=str(e),
+                status=400
+            )
+
+
+class ListAllAnimalAPI(APIView):
+    @staticmethod
+    def get(request):
+        try:
+            # open_api_url = "http://aiopen.etri.re.kr:8000/ObjectDetect"
+            # access_key = "8a7fab67-2d64-44f3-9cc0-5a555e252db0"
+            # image_file_path = ""
+            # image_type = "jpg"
+            #
+            # file = open(image_file_path, "rb")
+            # imageContents = base64.b64encode(file.read()).decode("utf8")
+            # file.close()
+            #
+            # requestJson = {
+            #     "argument": {
+            #         "type": image_type,
+            #         "file": imageContents
+            #     }
+            # }
+            #
+            # http = urllib3.PoolManager()
+            # http_response = http.request(
+            #     "POST",
+            #     open_api_url,
+            #     headers={"Content-Type": "application/json; charset=UTF-8", "Authorization": access_key},
+            #     body=json.dumps(requestJson)
+            # )
+            #
+            # print("[responseCode] " + str(http_response.status))
+            # print("[responseBody]")
+            # print(http_response.data)
+
+            manager = User.objects.get(id=1)
+            if request.user != manager:
+                raise Exception("관리자만 사용 가능한 api입니다.")
+            animal_image = AnimalImage.objects.all()
+            serializer = AnimalImageSerializer(animal_image, many=True)
+
+            return response(
+                data=serializer.data,
+                message=f"{len(serializer.data)}개의 데이터를 불러왔습니다.",
                 status=200
             )
         except Exception as e:
