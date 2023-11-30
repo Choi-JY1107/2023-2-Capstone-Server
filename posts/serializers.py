@@ -6,6 +6,7 @@ from .models import Post, PostImage, MissingImage
 
 
 class FeedPostSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     like_count = serializers.IntegerField()
     content = serializers.CharField(max_length=1000)
 
@@ -24,7 +25,7 @@ class FeedPostImageSerializer(serializers.Serializer):
 
 class FeedWriteSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=8)
-    profile_image = serializers.ImageField()
+    profile_number = serializers.IntegerField()
 
     class Meta:
         model = User

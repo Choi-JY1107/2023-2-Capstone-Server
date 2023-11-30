@@ -68,6 +68,15 @@ class PostLike(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def create_post_like(post, user):
+        post_like = PostLike.objects.create(
+            post_id=post,
+            user_id=user
+        )
+        post_like.save()
+
+        return post_like.id
+
 
 class MissingImage(models.Model):
     register_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)

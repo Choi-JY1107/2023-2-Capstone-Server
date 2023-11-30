@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from PIL import Image
 
-from posts.models import Post, PostImage, MissingImage
+from posts.models import Post, PostImage, MissingImage, PostLike
 from posts.serializers import (FeedPostSerializer, FeedPostImageSerializer,
                                FeedWriteSerializer, FeedSerializer,
                                MissingListSerializer)
@@ -122,6 +122,43 @@ class ListFeedsAPI(APIView):
                 message=f"{len(posts)}개의 피드를 불렀습니다",
                 status=200
             )
+        except Exception as e:
+            return response(
+                message=str(e),
+                status=400
+            )
+
+
+class LikeAPI(APIView):
+    @staticmethod
+    def patch(request):
+        try:
+            user = request.user
+            post = Post.objects.filter(id=request.data['post_id'])
+
+            print(user)
+            print(post)
+
+            print(1)
+            post_like = PostLike.objects.filter(user_id=user, post_id=post)
+            print(2)
+            if post_like is None:
+
+                print(3)
+
+                PostLike.create_post_like(user, post)
+            else:
+                print(4)
+
+                post_like.delete()
+
+            print(5)
+
+            return response(
+                message="성공!",
+                status=200
+            )
+
         except Exception as e:
             return response(
                 message=str(e),
