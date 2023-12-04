@@ -3,13 +3,9 @@ from rest_framework.views import APIView
 from animal.models import Animal, AnimalImage
 from animal.serializers import AnimalInfoSerializer, AnimalImageSerializer
 from users.models import User, UserDevice
+from users.serializers import UserInfoSerializer
 from util.response_format import response
 from util.send_to_firebase_cloud_messaging import send_to_firebase_cloud_messaging
-
-import urllib3
-import json
-import base64
-
 
 # animal 관련
 class CreateAnimalAPI(APIView):
@@ -34,9 +30,18 @@ class DetailAnimalAPI(APIView):
     def get(request, pk):
         try:
             animal = Animal.objects.get(id=pk)
-            serializer = AnimalInfoSerializer(animal)
+            user = animal.owner
+            animal_serializer = AnimalInfoSerializer(animal)
+
+            if not user.personal_consent :
+                user.phone_number = None
+            user_serializer = UserInfoSerializer(user)
+
+            data = {'animal': animal_serializer.data,
+                    'user': user_serializer.data}
+
             return response(
-                data=serializer.data,
+                data=data,
                 message="id = %d인 유저가 id = %d인 Animal 정보를 불러왔습니다." % (request.user.id, pk),
                 status=200
             )
