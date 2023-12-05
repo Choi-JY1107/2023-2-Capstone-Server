@@ -20,7 +20,15 @@ class CreatePostAPI(APIView):
     def post(request):
         try:
             post = Post.create_post(data=request.data, user=request.user)
+            images = request.data
+            image_list = images.getlist('images')
+
+            for image in image_list:
+
+                PostImage.create_post_image(image, post)
+
             return response(
+                data=post,
                 message="id = %d인 User 가 id = %s인 post를 등록하였습니다." % (request.user.id, post),
                 status=201
             )
