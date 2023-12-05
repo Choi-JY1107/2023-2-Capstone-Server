@@ -46,6 +46,33 @@ class DetailAnimalAPI(APIView):
                 message="id = %d인 유저가 id = %d인 Animal 정보를 불러왔습니다." % (request.user.id, pk),
                 status=200
             )
+        except Exception as e:
+            return response(
+                message=str(e),
+                status=400
+            )
+
+    @staticmethod
+    def put(request, pk):
+        try:
+            animal = Animal.objects.get(id=pk)
+
+            if animal.owner != request.user:
+                raise Exception("자신의 반려 동물의 정보만 수정할 수 있습니다.")
+
+            nickname = request.data['nickname']
+            characteristic = request.data['characteristic']
+            animal.nickname = nickname
+            animal.characteristic = characteristic
+            animal.save()
+
+            serializer = AnimalInfoSerializer(animal)
+
+            return response(
+                data=serializer.data,
+                message="id = %d인 동물의 정보를 수정하였습니다." % pk,
+                status=200
+            )
 
         except Exception as e:
             return response(
