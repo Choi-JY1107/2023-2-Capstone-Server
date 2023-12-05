@@ -7,6 +7,7 @@ from users.serializers import UserInfoSerializer
 from util.response_format import response
 from util.send_to_firebase_cloud_messaging import send_to_firebase_cloud_messaging
 
+
 # animal 관련
 class CreateAnimalAPI(APIView):
 
@@ -33,7 +34,7 @@ class DetailAnimalAPI(APIView):
             user = animal.owner
             animal_serializer = AnimalInfoSerializer(animal)
 
-            if not user.personal_consent :
+            if not user.personal_consent:
                 user.phone_number = None
             user_serializer = UserInfoSerializer(user)
 
@@ -143,7 +144,7 @@ class ListAnimalImageAPI(APIView):
 
             return response(
                 data=serializer.data,
-                message="Animal Image List Success",
+                message="id = %s인 동물의 사진 리스트를 불러왔습니다." % pk,
                 status=200
             )
 
@@ -152,6 +153,7 @@ class ListAnimalImageAPI(APIView):
                 message=str(e),
                 status=400
             )
+
 
 class AlertMissingAPI(APIView):
     @staticmethod
@@ -190,34 +192,6 @@ class ListAllAnimalAPI(APIView):
     @staticmethod
     def get(request):
         try:
-            # open_api_url = "http://aiopen.etri.re.kr:8000/ObjectDetect"
-            # access_key = "8a7fab67-2d64-44f3-9cc0-5a555e252db0"
-            # image_file_path = ""
-            # image_type = "jpg"
-            #
-            # file = open(image_file_path, "rb")
-            # imageContents = base64.b64encode(file.read()).decode("utf8")
-            # file.close()
-            #
-            # requestJson = {
-            #     "argument": {
-            #         "type": image_type,
-            #         "file": imageContents
-            #     }
-            # }
-            #
-            # http = urllib3.PoolManager()
-            # http_response = http.request(
-            #     "POST",
-            #     open_api_url,
-            #     headers={"Content-Type": "application/json; charset=UTF-8", "Authorization": access_key},
-            #     body=json.dumps(requestJson)
-            # )
-            #
-            # print("[responseCode] " + str(http_response.status))
-            # print("[responseBody]")
-            # print(http_response.data)
-
             manager = User.objects.get(id=1)
             if request.user != manager:
                 raise Exception("관리자만 사용 가능한 api입니다.")
@@ -227,6 +201,32 @@ class ListAllAnimalAPI(APIView):
             return response(
                 data=serializer.data,
                 message=f"{len(serializer.data)}개의 데이터를 불러왔습니다.",
+                status=200
+            )
+        except Exception as e:
+            return response(
+                message=str(e),
+                status=400
+            )
+
+
+class ListMyAnimalImageAPI(APIView):
+    @staticmethod
+    def get(request):
+        try:
+            user = request.user
+            animals = Animal.objects.filter(owner=user)
+            my_animals = list(map(lambda x: x.id, animals))
+
+            result = []
+            for my_animal_id in my_animals:
+                animal_image = AnimalImage.objects.filter(animal_id=my_animal_id)
+                serializer = AnimalImageSerializer(animal_image, many=True)
+                result.append(serializer.data)
+
+            return response(
+                data=result,
+                message=f"{len(result)}마리 동물의 데이터를 불러왔습니다.",
                 status=200
             )
         except Exception as e:
