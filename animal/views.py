@@ -81,9 +81,21 @@ class DetailAnimalAPI(APIView):
             )
 
     @staticmethod
-    def delete(request):
+    def delete(request, pk):
         try:
-            pass
+            animal = Animal.objects.get(id=pk)
+
+            if animal.owner != request.user:
+                raise Exception("자신의 반려 동물 정보만 삭제할 수 있습니다.")
+
+            serializer = AnimalInfoSerializer(animal)
+            animal.delete()
+
+            return response(
+                data=serializer.data,
+                message="id = %d인 동물의 정보를 삭제하였습니다." % pk,
+                status=200
+            )
 
         except Exception as e:
             return response(
