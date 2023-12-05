@@ -1,6 +1,6 @@
 from django.urls import path
 from animal.views import (CreateAnimalAPI, CreateAnimalImageAPI,
-                          DetailAnimalAPI, DetailAnimalImageAPI,
+                          DetailAnimalAPI, ChangeAnimalImageAPI,
                           ListAnimalAPI, ListAnimalImageAPI,
                           ListMyAnimalImageAPI,
                           ListAllAnimalAPI, AlertMissingAPI)
@@ -10,7 +10,7 @@ urlpatterns = [
     path("create", CreateAnimalAPI.as_view()),
     path("<int:pk>", DetailAnimalAPI.as_view()),
     path("image/create", CreateAnimalImageAPI.as_view()),
-    path("image/<int:pk>", DetailAnimalImageAPI.as_view()),
+    path("image/<int:pk>", ChangeAnimalImageAPI.as_view()),
     path("list", ListAnimalAPI.as_view()),
     path("image/list/<int:pk>", ListAnimalImageAPI.as_view()),
     path("image/mylist", ListMyAnimalImageAPI.as_view()),

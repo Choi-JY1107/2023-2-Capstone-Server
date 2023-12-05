@@ -83,17 +83,23 @@ class CreateAnimalImageAPI(APIView):
             )
 
 
-class DetailAnimalImageAPI(APIView):
+class ChangeAnimalImageAPI(APIView):
 
     @staticmethod
     def get(request, pk):
         try:
             animal_image = AnimalImage.objects.get(id=pk)
-            serializer = AnimalImageSerializer(animal_image)
+            animal = Animal.objects.get(id=animal_image.animal_id.id)
+            if animal.owner != request.user:
+                raise Exception("자신의 반려 동물 대표 이미지만 수정할 수 있습니다.")
+
+            animal.main_img_id = pk
+            animal.main_img = str(animal_image)
+            animal.save()
+
             return response(
-                data=serializer.data,
-                message="id = %d인 유저가 id = %s인 Animal Image를 요청하였습니다."
-                        % (request.user.id, animal_image),
+                message="id = %d인 유저가 id = %s인 Animal Image를 대표 이미지로 변경하였습니다."
+                        % (request.user.id, animal_image.id),
                 status=200)
         except Exception as e:
             return response(

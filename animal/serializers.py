@@ -17,6 +17,7 @@ class AnimalInfoSerializer(serializers.Serializer):
 
 
 class AnimalImageSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
     is_learning = serializers.BooleanField()
     register_date = serializers.DateTimeField()
     image = serializers.ImageField()
