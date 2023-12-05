@@ -80,14 +80,10 @@ class UserInfoAPI(APIView):
             user = request.user
             data = request.data
 
-            if user.nickname != data['nickname']:
-                user.nickname = data['nickname']
-            if user.phone_number != data['phone_number']:
-                user.phone_number = data['phone_number']
-            if user.profile_number != int(data['profile_number']):
-                user.profile_number = int(data['profile_number'])
-            if user.personal_consent != bool(data['personal_consent']):
-                user.personal_consent = bool(data['personal_consent'])
+            user.nickname = data['nickname']
+            user.phone_number = data['phone_number']
+            user.profile_number = int(data['profile_number'])
+            user.personal_consent = bool(data['personal_consent'])
             user.save()
 
             return response(
