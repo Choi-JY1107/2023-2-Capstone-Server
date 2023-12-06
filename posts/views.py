@@ -24,7 +24,6 @@ class CreatePostAPI(APIView):
             image_list = images.getlist('images')
 
             for image in image_list:
-
                 PostImage.create_post_image(image, post)
 
             return response(
@@ -113,7 +112,7 @@ class ListFeedsAPI(APIView):
     def get(request):
         try:
             feed_list = []
-            posts = Post.objects.all().order_by('register_date')
+            posts = Post.objects.all().order_by('-register_date')
             for post in posts:
                 post_images = PostImage.objects.filter(post_id=post).order_by('register_date')
                 register = post.register_id
