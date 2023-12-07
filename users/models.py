@@ -25,3 +25,14 @@ class UserDevice(models.Model):
 
     class Meta:
         db_table = 'User_Device'
+
+
+class UserAlarm(models.Model):
+    register_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False),
+    target_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False),
+    alarm_message = models.CharField(max_length=100, null=False),
+    type = models.IntegerField(null=False, blank=False)
+    register_date = models.DateTimeField(auto_now_add=True, null=False)
+
+    class Meta:
+        db_table = 'User_Alarm'
