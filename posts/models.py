@@ -97,9 +97,9 @@ class PostAlarm(models.Model):
     def create_user_alarm(target_username, register_username, content_type, content_id):
         alarm_message = ""
         if content_type == 1:
-            alarm_message = "당신의 실종 동물에 대한 제보가 들어왔습니다."
-        if content_type == 2:
             alarm_message = "누군가가 동물을 잃어버렸습니다."
+        if content_type == 2:
+            alarm_message = "당신의 실종 동물에 대한 제보가 들어왔습니다."
         if content_type == 3:
             alarm_message = "당신의 게시글에 발자국을 남겼습니다."
 
