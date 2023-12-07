@@ -3,7 +3,7 @@ from django.db import models
 import uuid
 
 from users.models import User
-from animal.models import AnimalImage
+from animal.models import Animal, AnimalImage
 
 
 class Post(models.Model):
@@ -60,6 +60,9 @@ class PostImage(models.Model):
 class MissingImage(models.Model):
     register_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     image = models.ImageField(verbose_name="실종 동물 사진", upload_to="missing", blank=True)
+    possibility_animal = models.ForeignKey(Animal, on_delete=models.CASCADE, null=True, blank=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
+    missing_location = models.CharField(max_length=500, default='', null=True, blank=True)
     register_date = models.DateTimeField(auto_now_add=True, null=False)
 
     class Meta:
@@ -77,3 +80,5 @@ class MissingImage(models.Model):
         )
 
         return missing_image.id
+
+

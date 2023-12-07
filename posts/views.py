@@ -78,8 +78,7 @@ class CreateMissingAPI(APIView):
 
             return response(
                 data=result,
-                message='id = %d인 User가 id = %d인 실종 사진을 등록하였습니다.'
-                        % (request.user.id, missing),
+                message=missing,
                 status=201
             )
 
@@ -154,6 +153,35 @@ class LikeAPI(APIView):
 
             return response(
                 message=message,
+                status=200
+            )
+
+        except Exception as e:
+            return response(
+                message=str(e),
+                status=400
+            )
+
+
+class FindMissingAPI(APIView):
+    @staticmethod
+    def post(request):
+        try:
+            missing_id = request.data['missing_id']
+            animal_id = request.data['animal_id']
+            find_location = request.data['find_location']
+            find_phone_number = request.data['find_phone_number']
+
+            missing = MissingImage.objects.get(id=int(missing_id))
+            missing.possibility_animal = Animal.objects.get(id=int(animal_id))
+            missing.phone_number = find_phone_number
+            missing.missing_location = find_location
+            missing.save()
+
+
+
+            return response(
+                message='id = %s인 실종 신고 정보를 주인에게 알렸습니다.' % missing_id,
                 status=200
             )
 

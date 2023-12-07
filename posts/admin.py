@@ -18,9 +18,9 @@ class PostImageAdmin(admin.ModelAdmin):
 
 class MissingImageAdmin(admin.ModelAdmin):
     list_display = (
-        'register_id', 'image', 'register_date'
+        'register_id', 'image', 'register_date', 'phone_number', 'missing_location'
     )
-    search_fields = ['register_id', 'image']
+    search_fields = ['register_id', 'image', 'phone_number', 'missing_location']
 
 
 admin.site.register(Post, PostAdmin)

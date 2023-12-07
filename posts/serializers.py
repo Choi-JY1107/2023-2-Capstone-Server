@@ -45,6 +45,8 @@ class FeedSerializer(serializers.Serializer):
 class MissingListSerializer(serializers.Serializer):
     register_id = serializers.CharField
     image = serializers.ImageField()
+    phone_number = serializers.CharField()
+    missing_location = serializers.CharField()
     register_date = serializers.DateTimeField()
 
     class Meta:
