@@ -94,7 +94,7 @@ class PostAlarm(models.Model):
     class Meta:
         db_table = 'Post_Alarm'
 
-    def create_user_alarm(register_user, target_user, content_type, content_id):
+    def create_user_alarm(target_username, register_username, content_type, content_id):
         alarm_message = ""
         if content_type == 1:
             alarm_message = "당신의 실종 동물에 대한 제보가 들어왔습니다."
@@ -104,8 +104,8 @@ class PostAlarm(models.Model):
             alarm_message = "당신의 게시글에 발자국을 남겼습니다."
 
         post_alarm = PostAlarm.objects.create(
-            register_user=register_user,
-            target_user=target_user,
+            target_username=target_username,
+            register_username=register_username,
             alarm_message=alarm_message,
             content_type=content_type,
             content_id=content_id,

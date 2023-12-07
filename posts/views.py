@@ -147,9 +147,24 @@ class LikeAPI(APIView):
 
             if post.like_users.filter(id=user.id).exists():
                 post.like_users.remove(user)
+                print(post.register_id.username)
+                print(request.user.username)
+                post_alarm = PostAlarm.objects.get(
+                    target_username=post.register_id.username,
+                    register_username=request.user.username,
+                    content_type=3,
+                    content_id=int(post.id)
+                )
+                post_alarm.delete()
                 message = "id = %s인 유저가 id = %s인 게시글의 좋아요를 취소하였습니다." % (user.id, post.id)
             else:
                 post.like_users.add(user)
+                PostAlarm.create_user_alarm(
+                    post.register_id.username,
+                    request.user.username,
+                    3,
+                    int(post.id)
+                )
                 message = "id = %s인 유저가 id = %s인 게시글의 좋아요를 눌렀습니다." % (user.id, post.id)
 
             return response(
@@ -195,7 +210,6 @@ class ListAlarmAPI(APIView):
     @staticmethod
     def get(request):
         try:
-            print(request.user.username)
             alarm_list = PostAlarm.objects.filter(target_username=request.user.username).order_by('register_date')
             serializer = PostAlarmListSerializer(alarm_list, many=True)
 
