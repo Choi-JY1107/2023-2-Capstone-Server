@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from users.models import User
 from animal.models import AnimalImage
-from .models import Post, PostImage, MissingImage
+from .models import Post, PostImage, MissingImage, PostAlarm
 
 
 class FeedPostSerializer(serializers.Serializer):
@@ -51,4 +51,15 @@ class MissingListSerializer(serializers.Serializer):
 
     class Meta:
         model = MissingImage
+        fields = '__all__'
+
+class PostAlarmListSerializer(serializers.Serializer):
+    register_username = serializers.CharField()
+    alarm_message = serializers.CharField()
+    content_type = serializers.IntegerField()
+    content_id = serializers.IntegerField()
+    register_date = serializers.DateTimeField()
+
+    class Meta:
+        model = PostAlarm
         fields = '__all__'

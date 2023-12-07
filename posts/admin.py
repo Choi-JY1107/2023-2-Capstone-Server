@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, PostImage, MissingImage
+from .models import Post, PostImage, MissingImage, PostAlarm
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -22,7 +22,16 @@ class MissingImageAdmin(admin.ModelAdmin):
     )
     search_fields = ['register_id', 'image', 'phone_number', 'missing_location']
 
+class PostAlarmAdmin(admin.ModelAdmin):
+    list_display = (
+        'target_username', 'register_username', 'alarm_message',
+        'content_type', 'content_id', 'register_date',
+    )
+    search_fields = ['target_username', 'register_username', 'alarm_message',
+                     'content_type', 'content_id']
+
 
 admin.site.register(Post, PostAdmin)
 admin.site.register(PostImage, PostImageAdmin)
 admin.site.register(MissingImage, MissingImageAdmin)
+admin.site.register(PostAlarm, PostAlarmAdmin)

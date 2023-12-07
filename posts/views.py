@@ -1,12 +1,13 @@
 from rest_framework.views import APIView
 from PIL import Image
 
-from posts.models import Post, PostImage, MissingImage
+from posts.models import Post, PostImage, MissingImage, PostAlarm
 from posts.serializers import (FeedPostSerializer, FeedPostImageSerializer,
-                               FeedWriteSerializer,
-                               MissingListSerializer)
+                               FeedWriteSerializer, MissingListSerializer,
+                               PostAlarmListSerializer)
 from animal.models import Animal
 from animal.serializers import AnimalInfoSerializer
+from users.models import User
 
 from util.pet_classification import predict_pet
 from util.response_format import response
@@ -178,13 +179,31 @@ class FindMissingAPI(APIView):
             missing.missing_location = find_location
             missing.save()
 
-
-
             return response(
                 message='id = %s인 실종 신고 정보를 주인에게 알렸습니다.' % missing_id,
                 status=200
             )
 
+        except Exception as e:
+            return response(
+                message=str(e),
+                status=400
+            )
+
+
+class ListAlarmAPI(APIView):
+    @staticmethod
+    def get(request):
+        try:
+            print(request.user.username)
+            alarm_list = PostAlarm.objects.filter(target_username=request.user.username).order_by('register_date')
+            serializer = PostAlarmListSerializer(alarm_list, many=True)
+
+            return response(
+                data=serializer.data,
+                message=f"{len(alarm_list)}개의 피드를 불렀습니다",
+                status=200
+            )
         except Exception as e:
             return response(
                 message=str(e),
