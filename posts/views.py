@@ -3,13 +3,11 @@ from PIL import Image
 
 from posts.models import Post, PostImage, MissingImage
 from posts.serializers import (FeedPostSerializer, FeedPostImageSerializer,
-                               FeedWriteSerializer, FeedSerializer,
+                               FeedWriteSerializer,
                                MissingListSerializer)
 from animal.models import Animal
 from animal.serializers import AnimalInfoSerializer
-from users.models import UserDevice, User
 
-from util.send_to_firebase_cloud_messaging import send_to_firebase_cloud_messaging
 from util.pet_classification import predict_pet
 from util.response_format import response
 
@@ -68,15 +66,16 @@ class CreateMissingAPI(APIView):
 
             for index in expected_pet_list:
                 animal = Animal.objects.filter(id=index[0])
-                if animal is None:
-                    continue
 
+                if len(animal) == 0:
+                    continue
                 if animal[0].is_missing:
                     serializer = AnimalInfoSerializer(animal[0])
                     result.append(serializer.data)
 
             if len(result) > 5:
                 result = result[:5]
+
             return response(
                 data=result,
                 message='id = %d인 User가 id = %d인 실종 사진을 등록하였습니다.'
