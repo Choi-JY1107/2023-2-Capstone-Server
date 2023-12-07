@@ -194,6 +194,13 @@ class FindMissingAPI(APIView):
             missing.missing_location = find_location
             missing.save()
 
+            PostAlarm.create_user_alarm(
+                missing.possibility_animal.owner.username,
+                request.user.username,
+                2,
+                int(missing.id)
+            )
+
             return response(
                 message='id = %s인 실종 신고 정보를 주인에게 알렸습니다.' % missing_id,
                 status=200
@@ -210,7 +217,7 @@ class ListAlarmAPI(APIView):
     @staticmethod
     def get(request):
         try:
-            alarm_list = PostAlarm.objects.filter(target_username=request.user.username).order_by('register_date')
+            alarm_list = PostAlarm.objects.filter(target_username=request.user.username).order_by('-register_date')
             serializer = PostAlarmListSerializer(alarm_list, many=True)
 
             return response(
