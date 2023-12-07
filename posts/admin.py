@@ -24,10 +24,10 @@ class MissingImageAdmin(admin.ModelAdmin):
 
 class PostAlarmAdmin(admin.ModelAdmin):
     list_display = (
-        'target_username', 'register_username', 'alarm_message',
+        'id', 'target_username', 'register_username', 'alarm_message',
         'content_type', 'content_id', 'register_date',
     )
-    search_fields = ['target_username', 'register_username', 'alarm_message',
+    search_fields = ['id', 'target_username', 'register_username', 'alarm_message',
                      'content_type', 'content_id']
 
 
