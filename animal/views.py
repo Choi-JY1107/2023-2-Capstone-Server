@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 
 from animal.models import Animal, AnimalImage
 from animal.serializers import AnimalInfoSerializer, AnimalImageSerializer
+from posts.models import PostAlarm
 from users.models import User, UserDevice
 from users.serializers import UserInfoSerializer
 from util.response_format import response
@@ -222,8 +223,29 @@ class AlertMissingAPI(APIView):
             for device in device_list:
                 send_to_firebase_cloud_messaging(device.fcm_token, title, body, link)
 
+            user_list = User.objects.all()
+            for user in user_list:
+                if user == request.user:
+                    continue
+
+                post_alarm = PostAlarm.objects.filter(
+                    target_username=user.username,
+                    register_username=request.user.username,
+                    content_type=1,
+                    content_id=int(animal_id)
+                )
+                if post_alarm.exists():
+                    continue
+
+                PostAlarm.create_user_alarm(
+                    user.username,
+                    request.user.username,
+                    1,
+                    int(animal_id)
+                )
+
             return response(
-                message=f"{len(device_list)}개의 디바이스에 id = %s인 동물의 실종 알림을 전송하였습니다." % animal_id,
+                message=f"{len(user_list) - 1}개의 디바이스에 id = %s인 동물의 실종 알림을 전송하였습니다." % animal_id,
                 status=200
             )
         except Exception as e:
