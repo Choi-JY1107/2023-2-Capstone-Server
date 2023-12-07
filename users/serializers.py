@@ -70,3 +70,15 @@ class SignupSerializer(serializers.Serializer):
         )
 
         return {'message': 'SignUp Success'}
+
+
+class UserAlarmSerializer(serializers.Serializer):
+    username = serializers.CharField(source='register_user.username')
+    alarm_message = serializers.CharField()
+    type = serializers.IntegerField()
+    content_id = serializers.IntegerField
+    register_date = serializers.DateTimeField()
+
+    class Meta:
+        model = User
+        fields = '__all__'

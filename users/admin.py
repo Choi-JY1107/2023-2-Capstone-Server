@@ -20,10 +20,10 @@ class UserDeviceAdmin(admin.ModelAdmin):
 
 class UserAlarmAdmin(admin.ModelAdmin):
     list_display = (
-        'register_id', 'target_id', 'alarm_message',
-        'type', 'register_date'
+        'register_user', 'target_user', 'content_id',
+        'alarm_message', 'content_type', 'register_date'
     )
-    search_fields = ['register_id', 'target_id', 'type']
+    search_fields = ['register_user', 'target_user', 'content_id', 'content_type']
 
 
 admin.site.register(UserDevice, UserDeviceAdmin)

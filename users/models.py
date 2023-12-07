@@ -28,11 +28,34 @@ class UserDevice(models.Model):
 
 
 class UserAlarm(models.Model):
-    register_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False),
-    target_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False),
+    register_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True),
+    target_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True),
     alarm_message = models.CharField(max_length=100, null=False),
-    type = models.IntegerField(null=False, blank=False)
+    content_type = models.IntegerField(null=False, blank=False),
+    content_id = models.IntegerField(null=True, blank=True),
     register_date = models.DateTimeField(auto_now_add=True, null=False)
 
     class Meta:
         db_table = 'User_Alarm'
+
+    def create_user_alarm(register_user, target_user, content_type, content_id):
+        alarm_message = ""
+        if content_type == 1:
+            alarm_message = "당신의 실종 동물에 대한 제보가 들어왔습니다."
+        if content_type == 2:
+            alarm_message = "누군가가 동물을 잃어버렸습니다."
+        if content_type == 3:
+            alarm_message = "당신의 게시글에 발자국을 남겼습니다."
+
+        user_alarm = UserAlarm.objects.create(
+            register_user=register_user,
+            target_user=target_user,
+            alarm_message=alarm_message,
+            content_type=content_type,
+            content_id=content_id,
+        )
+
+        return user_alarm
+
+    def __str__(self):
+        return str(self.id)
