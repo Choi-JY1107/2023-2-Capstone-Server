@@ -13,7 +13,6 @@ def predict_pet(image):
     file = _file.readlines()
     label_list = [x.strip() for x in file]
     _file.close()
-    print(label_list)
 
     # 이미지 데이터 표준화
     data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)

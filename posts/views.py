@@ -64,12 +64,15 @@ class CreateMissingAPI(APIView):
 
             image = Image.open(request.FILES['image'])
             expected_pet_list = predict_pet(image)
-
             result = []
+
             for index in expected_pet_list:
-                animal = Animal.objects.get(id=index[0])
-                if animal.is_missing:
-                    serializer = AnimalInfoSerializer(animal)
+                animal = Animal.objects.filter(id=index[0])
+                if animal is None:
+                    continue
+
+                if animal[0].is_missing:
+                    serializer = AnimalInfoSerializer(animal[0])
                     result.append(serializer.data)
 
             if len(result) > 5:
