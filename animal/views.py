@@ -307,6 +307,10 @@ class FoundMyPetAPI(APIView):
     def get(request, pk):
         try:
             animal = Animal.objects.get(id=pk)
+            animal.is_missing = False
+            animal.missing_location = ''
+            animal.save()
+
             if animal.owner != request.user:
                 raise Exception("자신의 반려동물만 실종 신고 해제할 수 있습니다.")
 
