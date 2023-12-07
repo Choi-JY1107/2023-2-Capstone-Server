@@ -301,3 +301,30 @@ class ListMyAnimalImageAPI(APIView):
                 message=str(e),
                 status=400
             )
+
+class FoundMyPetAPI(APIView):
+    @staticmethod
+    def get(request, pk):
+        try:
+            animal = Animal.objects.get(id=pk)
+            if animal.owner != request.user:
+                raise Exception("자신의 반려동물만 실종 신고 해제할 수 있습니다.")
+
+            post_alarms = PostAlarm.objects.filter(
+                register_username=request.user.username,
+                content_type=1,
+                content_id=int(pk)
+            )
+            for post_alarm in post_alarms:
+                post_alarm.delete()
+
+            return response(
+                message="id = %s인 유저가 id = %s인 자신의 반려동물을 찾았습니다." % (request.user.id, pk),
+                status=200
+            )
+        except Exception as e:
+            return response(
+                message=str(e),
+                status=400
+            )
+

@@ -3,7 +3,7 @@ from animal.views import (CreateAnimalAPI, CreateAnimalImageAPI,
                           DetailAnimalAPI, ChangeAnimalImageAPI,
                           ListAnimalAPI, ListAnimalImageAPI,
                           ListMyAnimalImageAPI,
-                          ListAllAnimalAPI, AlertMissingAPI)
+                          ListAllAnimalAPI, AlertMissingAPI, FoundMyPetAPI)
 
 
 urlpatterns = [
@@ -16,4 +16,5 @@ urlpatterns = [
     path("image/mylist", ListMyAnimalImageAPI.as_view()),
     path("alllist", ListAllAnimalAPI.as_view()),
     path("alert", AlertMissingAPI.as_view()),
+    path("found/<int:pk>", FoundMyPetAPI.as_view()),
 ]
