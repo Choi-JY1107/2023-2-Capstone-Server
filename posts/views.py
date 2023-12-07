@@ -230,3 +230,54 @@ class ListAlarmAPI(APIView):
                 message=str(e),
                 status=400
             )
+
+
+class DetailAlarmAPI(APIView):
+    @staticmethod
+    def get(request, pk):
+        try:
+            alarm = PostAlarm.objects.get(id=pk)
+            print(alarm.content_type)
+
+            if alarm.content_type == 1:
+                animal = Animal.objects.get(id=alarm.content_id)
+                result = {
+                    "main_img": animal.main_img,
+                    "nickname": animal.nickname,
+                    "location": animal.missing_location,
+                    "phone_number": animal.owner.phone_number,
+                    "characteristic" : animal.characteristic
+                }
+
+                return response(
+                    data=result,
+                    message="id = %d인 알람 내용을 요청하였습니다." % pk,
+                    status=200
+                )
+
+            if alarm.content_type == 2:
+                missing = MissingImage.objects.get(id=alarm.content_id)
+                animal = missing.possibility_animal
+                result = {
+                    "main_img": missing.image.name,
+                    "nickname": animal.nickname,
+                    "location": missing.missing_location,
+                    "phone_number": missing.phone_number,
+                }
+
+                return response(
+                    data=result,
+                    message="id = %d인 알람 내용을 요청하였습니다." % pk,
+                    status=200
+                )
+            if alarm.content_type == 3:
+                return response(
+                    message=alarm.alarm_message,
+                    status=200
+                )
+
+        except Exception as e:
+            return response(
+                message=str(e),
+                status=400
+            )

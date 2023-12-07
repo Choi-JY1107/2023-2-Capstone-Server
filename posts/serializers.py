@@ -54,6 +54,7 @@ class MissingListSerializer(serializers.Serializer):
         fields = '__all__'
 
 class PostAlarmListSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     register_username = serializers.CharField()
     alarm_message = serializers.CharField()
     content_type = serializers.IntegerField()
