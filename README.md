@@ -1,7 +1,5 @@
 # Project Catch Pet!
 
----
-
 ![Catch Pet](image/catch_pet_logo.png)
 
 - [프론트엔드 링크](https://github.com/realyuna/2023-2-Capstone-Flutter)
@@ -19,7 +17,6 @@
 
 # 👨‍👦‍👦 팀원 소개
 
----
 |              [박유나](https://github.com/realyuna)              |            [최재영](https://github.com/Choi-JY1107)             |            [이재민](https://github.com/DancingGamza)            |
 |:------------------------------------------------------------:|:------------------------------------------------------------:|:------------------------------------------------------------:|
 | ![박유나](https://avatars.githubusercontent.com/u/80978510?v=4) | ![최재영](https://avatars.githubusercontent.com/u/52996979?v=4) | ![이재민](https://avatars.githubusercontent.com/u/64300578?v=4) |
@@ -27,8 +24,6 @@
 
 
 # 🛠️  기술 스택
-
----
 
 ## Frontend
 ![frontend_tech_stack](image/frontend_tech_stack.png)
@@ -41,7 +36,7 @@
 ## Infra
 ![infra_tech_stack](image/infra_tech_stack.png)
 
-
+t
 ## AI
 ![ai_tech_stack](image/ai_tech_stack.png)
 
@@ -59,7 +54,6 @@
 
 # 🔶 로컬 실행 방법
 
----
 
 ## 백엔드
 ```
