@@ -36,7 +36,7 @@
 ## Infra
 ![infra_tech_stack](image/infra_tech_stack.png)
 
-t
+
 ## AI
 ![ai_tech_stack](image/ai_tech_stack.png)
 
