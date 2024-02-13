@@ -23,6 +23,18 @@
 |                       Frontend, Design                       |                      Backend, AI, Infra                      |                              PM                              |
 
 
+# 📃앱 메뉴얼
+![login](image/1.JPG)
+![main_window](image/2.JPG)
+![find_window](image/3.JPG)
+![find2_window](image/31.JPG)
+![report](image/4.JPG)
+![community](image/5.JPG)
+![notification](image/6.JPG)
+![mypage](image/7.JPG)
+![mypage2](image/71.JPG)
+
+
 # 🛠️  기술 스택
 
 ## Frontend
